@@ -561,6 +561,7 @@ function liveApi() {
 /* =====================================================================
    STATE
    ===================================================================== */
+CONFIG.SUPABASE_URL = String(CONFIG.SUPABASE_URL || "").trim().replace(/\/+$/, ""); CONFIG.SUPABASE_PUBLISHABLE_KEY = String(CONFIG.SUPABASE_PUBLISHABLE_KEY || "").trim();
 const LIVE = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_PUBLISHABLE_KEY);
 let api;
 const S = { me: null, role: "parent", d: null, ui: { tab: "home", mtab: "overview", aid: null, meetScope: "mine", fed: "all", dirScope: "mine", ride: "all", q: "", rosterTeam: null, mAid: null, sub: {}, shopCat: "all" }, sheet: null, carts: {}, armed: null, loading: true, error: null };
@@ -631,7 +632,7 @@ function render() {
   const set = S.d.set, mgr = S.role === "manager";
   const tabs = mgr ? MTABS : PTABS, cur = mgr ? S.ui.mtab : S.ui.tab;
   const kids = !mgr && S.d.myAthletes.length > 1 ? `<div class="wrap kids" role="group" aria-label="Choose athlete"><span class="kids-label">Viewing</span>${S.d.myAthletes.map(a => `<button class="kid" data-act="kid" data-id="${a.id}" aria-pressed="${a.id === S.ui.aid}"><span class="av">${esc(initials(fullName(a)))}</span>${esc(a.first_name)} <span class="muted small" style="font-weight:500">${esc(team(a.team).name)}</span></button>`).join("")}</div>` : "";
-  const band = api.demo ? `<div class="demo-band"><div class="wrap"><b>Demo</b><span>Made-up families. Viewing as ${esc(api.persona().label)}.</span><button class="linkbtn" data-act="persona">Switch person</button></div></div>` : "";
+  const band = api.demo ? `<div class="demo-band"><div class="wrap"><b>Demo</b><span>Made-up families, because this copy has no Supabase keys in CONFIG. Viewing as ${esc(api.persona().label)}.</span><button class="linkbtn" data-act="persona">Switch person</button></div></div>` : "";
   let body;
   try { body = mgr ? ({ overview: mOverview, roster: mRoster, practice: mPractice, meets: mMeets, orders: mOrders, setup: mSetup }[cur] || mOverview)() : parentView(cur); }
   catch (e) { console.error(e); body = `<div class="card">Something went wrong showing this page: ${esc(e.message)}</div>`; }
