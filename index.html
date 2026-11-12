@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head>
-<!-- Win Kids Team app. Put your Supabase URL and anon key in CONFIG below, then commit this file to GitHub; Vercel publishes it. --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><title>Win Kids Team</title>
+<!-- Win Kids Team app. Put your Supabase Project URL and Publishable key in CONFIG below, then commit this file to GitHub; Vercel publishes it. --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><title>Win Kids Team</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -210,6 +210,24 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .empty{text-align:center;padding:28px 16px;color:var(--muted)}
 .signin{min-height:100%;display:grid;place-items:center;padding-block:40px}
 textarea.csv{width:100%;min-height:220px;font-family:ui-monospace,Menlo,monospace;font-size:.78rem;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface)}
+/* section buttons */
+.subnav{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--top-h,64px));z-index:15;background:var(--bg);padding-block:8px;margin-block:-8px}
+.subnav-in{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px}
+.subnav-in::-webkit-scrollbar{display:none}
+.sn{min-width:0;border:0;background:none;border-radius:9px;padding:9px 6px;font-size:.86rem;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;min-height:40px}
+.sn:hover{color:var(--ink);background:var(--surface-2)}
+.sn[aria-pressed="true"]{background:var(--brand);color:var(--on-brand)}
+.sn-c{font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 7px;background:var(--surface-2);color:var(--muted);font-variant-numeric:tabular-nums}
+.sn-c.alert{background:var(--warn-soft);color:var(--warn)}
+.sn[aria-pressed="true"] .sn-c{background:var(--accent);color:var(--on-accent)}
+.chip-sep{flex:none;width:1px;background:var(--line);margin:4px 2px}
+.stat-btn{text-align:left;display:flex;flex-direction:column;gap:2px;cursor:pointer;color:inherit;font:inherit}
+.stat-btn:hover{border-color:var(--ink)}
+.famrow{padding:12px 14px}
+.famrow summary{list-style:none;display:flex;gap:10px;align-items:center;color:var(--ink);font-size:inherit;font-weight:inherit}
+.famrow summary::-webkit-details-marker{display:none}
+.chev{flex:none;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px}
+.famrow[open] .chev{transform:rotate(-135deg);margin:4px 4px 0}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
 
@@ -217,11 +235,12 @@ textarea.csv{width:100%;min-height:220px;font-family:ui-monospace,Menlo,monospac
 <div id="sheet-root"></div>
 <div id="toast" class="toast" hidden></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script>
 /* =====================================================================
-   SETUP: paste your Supabase project URL and anon (public) key here.
-   Leave both blank to run the demo with made-up families.
+   SETUP: paste your Supabase Project URL and Publishable key here.
+   (Supabase → Project Settings → API Keys. The key starts with sb_publishable_)
+   Never paste the Secret key. Leave both blank to run the demo.
    ===================================================================== */
 const CONFIG = {
   SUPABASE_URL: "https://shwlimqshqqlepcketat.supabase.co",
@@ -521,7 +540,7 @@ function demoApi() {
 }
 
 function liveApi() {
-  const sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+  const sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_PUBLISHABLE_KEY);
   const chk = ({ data, error }) => { if (error) throw new Error(error.message); return data; };
   return {
     demo: false, sb,
@@ -542,9 +561,9 @@ function liveApi() {
 /* =====================================================================
    STATE
    ===================================================================== */
-const LIVE = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY);
+const LIVE = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_PUBLISHABLE_KEY);
 let api;
-const S = { me: null, role: "parent", d: null, ui: { tab: "home", mtab: "overview", aid: null, meetScope: "mine", fed: "all", dirScope: "mine", ride: "all", q: "", rosterTeam: "all", rosterMode: "contacts", mAid: null, orderStatus: "open" }, sheet: null, carts: {}, armed: null, loading: true, error: null };
+const S = { me: null, role: "parent", d: null, ui: { tab: "home", mtab: "overview", aid: null, meetScope: "mine", fed: "all", dirScope: "mine", ride: "all", q: "", rosterTeam: null, mAid: null, sub: {}, shopCat: "all" }, sheet: null, carts: {}, armed: null, loading: true, error: null };
 Object.defineProperty(S, "cart", { get() { const k = (S.d && curA()?.id) || "_"; return S.carts[k] || (S.carts[k] = []); }, set(v) { const k = (S.d && curA()?.id) || "_"; S.carts[k] = v; } });
 const prefs = { get(k) { try { return localStorage.getItem("wk." + k); } catch { return null; } }, set(k, v) { try { localStorage.setItem("wk." + k, v); } catch {} } };
 
@@ -627,6 +646,7 @@ function render() {
   <main class="wrap">${S.error ? `<div class="card" style="margin-bottom:12px"><b>Couldn't load the latest info.</b> <span class="muted">${esc(S.error)}</span></div>` : ""}${body}</main>
   ${cartCount && ((!mgr && S.ui.tab === "shop") || (mgr && S.ui.mtab === "orders" && S.ui.mAid)) ? `<div class="cartbar"><div class="wrap"><button data-act="cart"><span>${cartCount} item${cartCount > 1 ? "s" : ""} in ${esc(curA()?.first_name || "")}'s order</span><span class="tnum">${money(S.cart.reduce((s, c) => s + (c.price || 0) * c.qty, 0))} · Review</span></button></div></div>` : ""}
   <nav class="tabs" aria-label="Sections"><div class="wrap">${tabs.map(([k, l]) => `<button class="tab" data-act="tab" data-tab="${k}" ${k === cur ? 'aria-current="page"' : ""}><span class="ic">${ic(k)}</span>${l}</button>`).join("")}</div></nav>`;
+  syncTop();
   renderSheet();
 }
 
@@ -650,50 +670,277 @@ function parentView(tab) {
   return ({ home: pHome, practice: pPractice, meets: pMeets, shop: pShop, team: pTeam }[tab] || pHome)(a);
 }
 
-function pHome(a) {
-  const t = team(a.team), st = hoursStatus(a), today = todayISO();
-  const mine = signupsOf(a.id).map(s => ({ s, o: S.d.practice_options.find(o => o.id === s.option_id) })).filter(x => x.o).sort((x, y) => x.o.sort - y.o.sort);
-  const pct = t.min_hours ? Math.min(100, st.h / (t.max_hours || t.min_hours) * 100) : 0;
-  const next = meetsFor(a.level).filter(m => m.kind !== "closure" && (m.end_date || m.start_date) >= today).slice(0, 2);
-  const todo = [];
-  const hol = S.d.holiday_days.filter(h => h.day >= today && holOf(a.id, h.id) == null);
-  if (hol.length) todo.push([`Reply for holiday practice (${hol.length} day${hol.length > 1 ? "s" : ""})`, "practice"]);
-  if (t.min_hours != null && st.h < t.min_hours) todo.push([`Pick practice days: ${st.text.toLowerCase()}`, "practice"]);
-  if (pkgsFor(a.level).length && !a.meet_package) todo.push(["Choose a meet fee package", "meets"]);
-  const unrsvp = meetsFor(a.level).filter(m => m.kind !== "closure" && m.start_date >= today && !rsvpOf(a.id, m.id)).length;
-  if (unrsvp) todo.push([`Answer ${unrsvp} meet RSVP${unrsvp > 1 ? "s" : ""}`, "meets"]);
-  if (!a.leo_size || !a.sweatshirt_size) todo.push(["Add sizes for apparel orders", "shop"]);
-  const f = S.d.myFamily; if (f && (!f.p1_phone || !f.p1_email)) todo.push(["Add a phone and email for the directory", "family"]);
-  return `<div class="stack-lg">
-  <section class="card hero stack">
-    <div class="row between"><span class="eyebrow">${esc(t.name)}</span><span class="pill ${st.cls === "ok" ? "lime" : st.cls}">${esc(st.text)}</span></div>
-    <h1>${esc(a.first_name)}'s week</h1>
-    ${t.min_hours != null ? `<div class="stack" style="gap:6px"><div class="meter"><i style="width:${pct}%"></i></div><div class="small muted tnum">${st.h} of ${t.min_hours}${t.max_hours && t.max_hours !== t.min_hours ? `–${t.max_hours}` : ""} hours per week</div></div>` : ""}
-    ${mine.length ? `<div class="list">${mine.map(({ s, o }) => `<div class="li"><div class="grow"><b>${esc(o.label)}</b><div class="small muted">${esc(o.schedule)}</div></div>${s.waitlisted ? `<span class="pill warn">Waitlist #${waitPos(s)}</span>` : `<span class="small tnum">${o.hours} hr</span>`}</div>`).join("")}</div>` : `<p class="muted" style="margin:0">No practice days picked yet.</p>`}
-    <div><button class="btn lime sm" data-act="tab" data-tab="practice">${mine.length ? "Change practice days" : "Pick practice days"}</button></div>
-  </section>
-  ${todo.length ? `<section class="card stack"><h3>To do</h3>${todo.map(([txt, go]) => `<div class="todo"><span class="dot"></span><span class="grow">${esc(txt)}</span><button class="btn sm" data-act="${go === "family" ? "family" : "tab"}" data-tab="${go}">Open</button></div>`).join("")}</section>` : `<section class="card row"><span class="pill ok">All caught up</span><span class="muted small">Nothing needs your attention right now.</span></section>`}
-  <section class="stack"><div class="section-h"><h2>Next meets</h2><button class="linkbtn" data-act="tab" data-tab="meets">Full schedule</button></div>
-    ${next.length ? next.map(m => meetCard(m, a)).join("") : `<div class="card muted">No upcoming meets for ${esc(LEVELS[a.level] || a.level)}.</div>`}</section>
-  <section class="card row between"><div><h3>${esc(S.d.myFamily?.p1_name || "Your family")}</h3><div class="muted small">Contact info, directory listing and carpool</div></div><button class="btn sm" data-act="family">Edit family info</button></section>
-  </div>`;
+/* ---------- section buttons (one category at a time) ---------- */
+function subnav(key, items) {
+  let cur = S.ui.sub[key];
+  if (!items.some(i => i[0] === cur)) cur = items[0][0];
+  S.ui.sub[key] = cur;
+  return { cur, html: `<nav class="subnav" aria-label="Sections"><div class="subnav-in" role="group">${items.map(([id, l, c, alert]) => `<button class="sn" data-act="sub" data-k="${key}" data-v="${id}" aria-pressed="${id === cur}">${esc(l)}${c && alert ? ` <span class="sn-c alert">${c}</span>` : ""}</button>`).join("")}</div></nav>` };
 }
-function waitPos(s) { return S.d.roster.filter(r => r.option_id === s.option_id && r.waitlisted).sort(by("created_at")).findIndex(r => r.athlete_id === s.athlete_id) + 1 || 1; }
+const pageHead = (eyebrow, title, actions) => `<section class="stack" style="gap:6px"><div class="row between"><div class="stack" style="gap:4px">${eyebrow ? `<span class="eyebrow">${eyebrow}</span>` : ""}<h1>${title}</h1></div>${actions ? `<div class="row">${actions}</div>` : ""}</div></section>`;
+
+/* ---------------- PARENT ---------------- */
+function todoList(a) {
+  const t = team(a.team), st = hoursStatus(a), today = todayISO(), todo = [];
+  const hol = S.d.holiday_days.filter(h => h.day >= today && holOf(a.id, h.id) == null);
+  if (t.min_hours != null && st.h < t.min_hours) todo.push([`Pick practice days: ${st.text.toLowerCase()}`, "practice", "signup"]);
+  if (hol.length) todo.push([`Reply for holiday practice (${hol.length} day${hol.length > 1 ? "s" : ""})`, "practice", "holidays"]);
+  const unrsvp = meetsFor(a.level).filter(m => m.kind !== "closure" && m.start_date >= today && !rsvpOf(a.id, m.id)).length;
+  if (unrsvp) todo.push([`Answer ${unrsvp} meet RSVP${unrsvp > 1 ? "s" : ""}`, "meets", "schedule"]);
+  if (pkgsFor(a.level).length && !a.meet_package) todo.push(["Choose a meet fee package", "meets", "fees"]);
+  if (!a.leo_size || !a.sweatshirt_size) todo.push(["Add sizes for apparel orders", "shop", "sizes"]);
+  const f = S.d.myFamily; if (f && (!f.p1_phone || !f.p1_email)) todo.push(["Add a phone and email for the directory", "home", "family"]);
+  return todo;
+}
+function pHome(a) {
+  const t = team(a.team), st = hoursStatus(a), today = todayISO(), todo = todoList(a);
+  const sn = subnav("home", [["week", "This week"], ["todo", "To do", todo.length || "", true], ["family", "Family"]]);
+  let body = "";
+  if (sn.cur === "week") {
+    const mine = signupsOf(a.id).map(s => ({ s, o: S.d.practice_options.find(o => o.id === s.option_id) })).filter(x => x.o).sort((x, y) => x.o.sort - y.o.sort);
+    const pct = t.min_hours ? Math.min(100, st.h / (t.max_hours || t.min_hours) * 100) : 0;
+    const next = meetsFor(a.level).find(m => m.kind !== "closure" && (m.end_date || m.start_date) >= today);
+    body = `<section class="card hero stack">
+      <div class="row between"><span class="eyebrow">${esc(t.name)}</span><span class="pill ${st.cls === "ok" ? "lime" : st.cls}">${esc(st.text)}</span></div>
+      <h1>${esc(a.first_name)}'s week</h1>
+      ${t.min_hours != null ? `<div class="stack" style="gap:6px"><div class="meter"><i style="width:${pct}%"></i></div><div class="small muted tnum">${st.h} of ${t.min_hours}${t.max_hours && t.max_hours !== t.min_hours ? `–${t.max_hours}` : ""} hours per week</div></div>` : ""}
+      ${mine.length ? `<div class="list">${mine.map(({ s, o }) => `<div class="li"><div class="grow"><b>${esc(o.label)}</b><div class="small muted">${esc(o.schedule)}</div></div>${s.waitlisted ? `<span class="pill warn">Waitlist #${waitPos(s)}</span>` : `<span class="small tnum">${o.hours} hr</span>`}</div>`).join("")}</div>` : `<p class="muted" style="margin:0">No practice days picked yet.</p>`}
+      <div><button class="btn lime sm" data-act="tab" data-tab="practice" data-sub="signup">${mine.length ? "Change practice days" : "Pick practice days"}</button></div>
+    </section>
+    ${next ? `<section class="stack"><div class="section-h"><h2>Next meet</h2><button class="linkbtn" data-act="tab" data-tab="meets" data-sub="schedule">All meets</button></div>${meetCard(next, a)}</section>` : ""}`;
+  } else if (sn.cur === "todo") {
+    body = todo.length ? `<section class="card stack">${todo.map(([txt, go, sub]) => `<div class="todo"><span class="dot"></span><span class="grow">${esc(txt)}</span><button class="btn sm" data-act="tab" data-tab="${go}" data-sub="${sub}">Open</button></div>`).join("")}</section>`
+      : `<section class="card row"><span class="pill ok">All caught up</span><span class="muted small">Nothing needs your attention for ${esc(a.first_name)} right now.</span></section>`;
+  } else {
+    const f = S.d.myFamily || {};
+    body = `<section class="card stack"><div class="row between"><h3>Family info</h3><button class="btn sm primary" data-act="family">Edit</button></div>
+      ${contactLine(f.p1_name, f.p1_email, f.p1_phone) || `<div class="muted small">No parent info yet.</div>`}${contactLine(f.p2_name, f.p2_email, f.p2_phone)}
+      <div class="list">
+        <div class="li"><span class="grow muted small">City</span><span>${esc(f.city || "—")}</span></div>
+        <div class="li"><span class="grow muted small">Carpool</span><span>${esc(CARPOOL[f.carpool] || "Not set")}</span></div>
+        <div class="li"><span class="grow muted small">Team directory</span><span class="pill ${f.show_in_directory === false ? "line" : "ok"}">${f.show_in_directory === false ? "Not listed" : "Listed"}</span></div>
+      </div></section>`;
+  }
+  return `<div class="stack-lg">${sn.html}${body}</div>`;
+}
 
 function pPractice(a) {
   const t = team(a.team), opts = optsFor(a.team), st = hoursStatus(a), today = todayISO();
-  const hol = S.d.holiday_days.filter(h => h.day >= today);
-  return `<div class="stack-lg">
-  <section class="stack"><span class="eyebrow">${esc(t.name)} · Practice sign-up</span><h1>Pick ${t.signup_mode === "group" ? "a group" : "practice days"}</h1>
-    <p class="muted" style="margin:0">${esc(t.practice_note || "")} ${esc(S.d.set.practice_note || "")}</p>
-    ${t.min_hours != null ? `<div class="row"><span class="pill ${st.cls}">${esc(st.text)}</span><span class="small muted tnum">${st.h} hrs signed up · ${t.min_hours}${t.max_hours && t.max_hours !== t.min_hours ? `–${t.max_hours}` : ""} hrs required</span></div>` : ""}
-  </section>
-  ${opts.length ? `<section class="stack">${opts.map(o => optCard(o, a, t)).join("")}</section>` : `<div class="card empty">Practice options for ${esc(t.name)} haven't been posted yet.</div>`}
-  ${hol.length ? `<section class="card stack"><div><h3>Holiday practice</h3><p class="muted small" style="margin:4px 0 0">Let the coaches know if ${esc(a.first_name)} will come, so they can plan how many coaches to schedule.</p></div>
-    <div class="list">${hol.map(h => { const v = holOf(a.id, h.id); return `<div class="li"><div class="grow"><b>${esc(h.label)}</b><div class="small muted">${fmtDay(h.day)}</div></div>
-    <div class="seg" role="group" aria-label="${esc(h.label)}"><button class="y" data-act="hol" data-day="${h.id}" data-v="1" aria-pressed="${v === true}">Yes</button><button class="n" data-act="hol" data-day="${h.id}" data-v="0" aria-pressed="${v === false}">No</button></div></div>`; }).join("")}</div></section>` : ""}
-  </div>`;
+  const hol = S.d.holiday_days.filter(h => h.day >= today), holOpen = hol.filter(h => holOf(a.id, h.id) == null).length;
+  const mine = signupsOf(a.id).map(s => ({ s, o: S.d.practice_options.find(o => o.id === s.option_id) })).filter(x => x.o).sort((x, y) => x.o.sort - y.o.sort);
+  const sn = subnav("practice", [["signup", "Sign up"], ["mine", "My schedule", mine.length || ""], ...(hol.length ? [["holidays", "Holidays", holOpen || "", true]] : [])]);
+  const hoursRow = t.min_hours != null ? `<div class="row"><span class="pill ${st.cls}">${esc(st.text)}</span><span class="small muted tnum">${st.h} hrs signed up · ${t.min_hours}${t.max_hours && t.max_hours !== t.min_hours ? `–${t.max_hours}` : ""} hrs required</span></div>` : "";
+  let body = "";
+  if (sn.cur === "signup") {
+    body = `<section class="stack" style="gap:8px">${hoursRow}<details><summary>How sign-up works for ${esc(t.name)}</summary><p class="small" style="margin:8px 0 0">${esc(t.practice_note || "")} ${esc(S.d.set.practice_note || "")}</p></details></section>
+      ${opts.length ? `<section class="stack">${opts.map(o => optCard(o, a, t)).join("")}</section>` : `<div class="card empty">Practice options for ${esc(t.name)} haven't been posted yet.</div>`}`;
+  } else if (sn.cur === "mine") {
+    body = `${hoursRow}<section class="card stack">${mine.length ? `<div class="list">${mine.map(({ s, o }) => `<div class="li"><div class="day" style="width:48px;padding:5px 0"><b>${esc(o.schedule.slice(0, 3))}</b></div><div class="grow"><b>${esc(o.label)}</b><div class="small muted">${esc(o.schedule)}</div></div>${s.waitlisted ? `<span class="pill warn">Waitlist #${waitPos(s)}</span>` : `<span class="pill lime">${o.hours} hr</span>`}</div>`).join("")}</div>` : `<div class="empty">No practice days picked yet.</div>`}
+      <button class="btn block" data-act="sub" data-k="practice" data-v="signup">${mine.length ? "Change days" : "Pick practice days"}</button></section>`;
+  } else {
+    body = `<section class="card stack"><p class="muted small" style="margin:0">Let the coaches know if ${esc(a.first_name)} will come, so they can plan how many coaches to schedule.</p>
+      <div class="list">${hol.map(h => { const v = holOf(a.id, h.id); return `<div class="li"><div class="grow"><b>${esc(h.label)}</b><div class="small muted">${fmtDay(h.day)}</div></div>
+      <div class="seg" role="group" aria-label="${esc(h.label)}"><button class="y" data-act="hol" data-day="${h.id}" data-v="1" aria-pressed="${v === true}">Yes</button><button class="n" data-act="hol" data-day="${h.id}" data-v="0" aria-pressed="${v === false}">No</button></div></div>`; }).join("")}</div></section>`;
+  }
+  return `<div class="stack-lg">${pageHead(esc(t.name), "Practice")}${sn.html}${body}</div>`;
 }
+
+function pMeets(a) {
+  const today = todayISO(), scope = S.ui.meetScope, fed = S.ui.fed;
+  const pk = pkgsFor(a.level), chosen = S.d.meet_packages.find(p => p.id === a.meet_package);
+  const base = scope === "mine" ? meetsFor(a.level) : S.d.meets.slice();
+  const unrsvp = meetsFor(a.level).filter(m => m.kind !== "closure" && m.start_date >= today && !rsvpOf(a.id, m.id)).length;
+  const sn = subnav("meets", [["schedule", "Schedule", unrsvp || "", true], ...(pk.length ? [["fees", "Meet fees", chosen ? "" : "!", !chosen]] : []), ["past", "Past"]]);
+  let body = "";
+  if (sn.cur === "schedule") {
+    let list = base.filter(m => (m.end_date || m.start_date) >= today);
+    if (fed !== "all") list = list.filter(m => m.kind === "closure" || (m.federations || []).includes(fed));
+    body = `<section class="stack" style="gap:8px">
+      <div class="chips" role="group" aria-label="Whose meets"><button class="chip" data-act="meetScope" data-v="mine" aria-pressed="${scope === "mine"}">${esc(LEVELS[a.level] || a.level)} only</button><button class="chip" data-act="meetScope" data-v="all" aria-pressed="${scope === "all"}">All teams</button>
+      <span class="chip-sep" aria-hidden="true"></span><button class="chip" data-act="fed" data-v="all" aria-pressed="${fed === "all"}">All</button>${FEDS.filter(f => S.d.meets.some(m => (m.federations || []).includes(f))).map(f => `<button class="chip" data-act="fed" data-v="${f}" aria-pressed="${fed === f}">${f}</button>`).join("")}</div></section>
+      <section class="stack">${timeline(list, a, scope === "all")}</section>
+      <p class="small muted">${["XG", "XP", "XD"].includes(a.level) ? "If competing in both USAG and TAAF, compete in at least 3 TAAF Qualifiers to qualify for TAAF State." : "Compete in 3 of the TAAF Qualifiers to qualify for your level's TAAF State meet."}</p>`;
+  } else if (sn.cur === "fees") {
+    body = `<section class="card stack"><div class="row between"><div><h3>${chosen ? esc(chosen.name) : "No package chosen yet"}</h3><div class="small muted">${chosen ? `${esc(a.meet_plan || "Payment plan not picked")}${chosen.meets_count ? ` · ${chosen.meets_count} meets` : ""}` : `Choose the competition package for ${esc(a.first_name)}.`}</div></div><button class="btn sm ${chosen ? "" : "primary"}" data-act="pkg">${chosen ? "Change" : "Choose"}</button></div>
+      ${chosen ? `<div class="small muted">${esc(chosen.due_note || "")}</div>` : ""}</section>
+      <section class="card stack"><h3>Packages for ${esc(LEVELS[a.level] || a.level)}</h3><div class="list">${pk.map(p => `<div class="li"><div class="grow"><b>${esc(p.name)}</b><div class="small muted tnum">${money(p.full_price)} full · ${money(p.half_price)} × 2 · ${money(p.monthly_price)} × 6</div></div>${p.id === a.meet_package ? `<span class="pill lime">Chosen</span>` : ""}</div>`).join("")}</div></section>`;
+  } else {
+    const past = base.filter(m => (m.end_date || m.start_date) < today).reverse();
+    body = past.length ? `<section class="stack">${past.map(m => meetCard(m, a, true, scope === "all")).join("")}</section>` : `<div class="card empty">No meets have happened yet this season.</div>`;
+  }
+  return `<div class="stack-lg">${pageHead(`${esc(LEVELS[a.level] || a.level)} · ${esc(S.d.set.season || "")}`, "Meets")}${sn.html}${body}</div>`;
+}
+
+function pShop(a) {
+  const items = S.d.store_items.filter(it => itemFits(it, a));
+  const myOrders = S.d.orders.filter(o => o.family_id === a.family_id).sort(by("created_at")).reverse();
+  const sf = Object.entries(SIZE_FIELDS).filter(([, v]) => !v.teams || v.teams.includes(a.team));
+  const missing = sf.filter(([k]) => !a[k]).length, openOrders = myOrders.filter(o => !["picked_up", "cancelled"].includes(o.status)).length;
+  const sn = subnav("shop", [["store", "Store"], ["sizes", "Sizes", missing || "", true], ["orders", "Orders", openOrders || ""]]);
+  let body = "";
+  if (sn.cur === "store") {
+    const cat = S.ui.shopCat, shown = items.filter(it => cat === "all" || it.category === cat);
+    body = `<div class="chips" role="group" aria-label="Category"><button class="chip" data-act="shopCat" data-v="all" aria-pressed="${cat === "all"}">Everything</button><button class="chip" data-act="shopCat" data-v="athlete" aria-pressed="${cat === "athlete"}">For ${esc(a.first_name)}</button><button class="chip" data-act="shopCat" data-v="family" aria-pressed="${cat === "family"}">Parents & siblings</button></div>
+      <section class="grid2">${shown.map(it => { const p = priceFor(it, a); return `<article class="card item">
+      <div class="row between"><span class="eyebrow">${it.category === "family" ? "Parents & siblings" : "Athlete"}</span>${it.required_note ? `<span class="pill warn">Required*</span>` : ""}</div>
+      <h3>${esc(it.name)}</h3><div class="price">${money(p)}</div>
+      ${it.description ? `<div class="small muted">${esc(it.description)}</div>` : ""}${it.required_note ? `<div class="small">*${esc(it.required_note)}</div>` : ""}
+      <div style="margin-top:auto"><button class="btn block" data-act="additem" data-id="${it.id}">Add to order</button></div></article>`; }).join("") || `<div class="card empty">Nothing here.</div>`}</section>
+      <p class="small muted">Only items for ${esc(team(a.team).name)} are shown. ${esc(S.d.set.payment_note || "")}</p>`;
+  } else if (sn.cur === "sizes") {
+    body = `<section class="card stack"><div class="row between"><h3>${esc(a.first_name)}'s sizes</h3><button class="btn sm primary" data-act="sizes">Update sizes</button></div>
+      <div class="sizes">${sf.map(([k, v]) => `<div class="size"><small>${v.label}</small><b>${esc(a[k] || "—")}</b></div>`).join("")}</div>
+      <div class="small muted">Sizes fill in automatically when you order. Growing? Tap "Update sizes," then "+ Size up."${a.sizes_updated_at ? ` Last updated ${new Date(a.sizes_updated_at).toLocaleDateString()}.` : ""}</div></section>`;
+  } else {
+    body = myOrders.length ? `<section class="stack">${myOrders.map(o => orderCard(o, S.role === "manager")).join("")}</section>` : `<div class="card empty">No orders yet.</div>`;
+  }
+  return `<div class="stack-lg">${S.role === "manager" ? "" : pageHead(esc(team(a.team).name), "Shop")}${sn.html}${body}</div>`;
+}
+
+function pTeam(a) {
+  const q = S.ui.q.trim().toLowerCase(), ride = S.ui.ride === "need" ? "need" : "offer";
+  const all = S.d.directory.slice().sort((x, y) => fullName((x.athletes || [])[0] || {}).localeCompare(fullName((y.athletes || [])[0] || {})));
+  const mineT = all.filter(f => (f.athletes || []).some(x => x.team === a.team));
+  const rides = all.filter(f => f.carpool && f.carpool !== "none");
+  const sn = subnav("team", [["mine", "Our team", mineT.length], ["all", "Everyone", all.length], ["rides", "Carpools", rides.length]]);
+  let fams, top = "";
+  if (sn.cur === "rides") {
+    fams = rides.filter(f => ride === "offer" ? (f.carpool === "offer" || f.carpool === "both") : (f.carpool === "need" || f.carpool === "both"));
+    top = `<div class="chips" role="group"><button class="chip" data-act="ride" data-v="offer" aria-pressed="${ride === "offer"}">Can give rides</button><button class="chip" data-act="ride" data-v="need" aria-pressed="${ride === "need"}">Need rides</button></div>`;
+  } else fams = sn.cur === "mine" ? mineT : all;
+  if (q) fams = fams.filter(f => [f.p1_name, f.p2_name, f.city, ...(f.athletes || []).map(fullName)].join(" ").toLowerCase().includes(q));
+  const listed = S.d.myFamily?.show_in_directory;
+  return `<div class="stack-lg">${pageHead("Team directory", "Families")}${sn.html}
+    <section class="stack" style="gap:8px">${top}<div class="field"><label for="dir-q" class="sr">Search</label><input id="dir-q" type="search" placeholder="Search by athlete, parent or city" value="${esc(S.ui.q)}" data-input="q"></div>
+    <div class="small muted">${listed === false ? `Your family is <b>not listed</b>. ` : ""}Only families who chose to be listed appear here. <button class="linkbtn" data-act="family">Change your listing or carpool</button></div></section>
+    <section class="stack" style="gap:8px">${fams.length ? fams.map(famCard).join("") : `<div class="card empty">No families match.</div>`}</section></div>`;
+}
+
+/* ---------------- MANAGER ---------------- */
+function mOverview() {
+  const d = S.d, act = d.athletes.filter(a => a.active !== false), today = todayISO();
+  const under = act.filter(a => { const t = team(a.team); return t.min_hours != null && hoursOf(a.id) < t.min_hours; });
+  const missing = d.families.filter(f => !f.p1_email || !f.p1_phone);
+  const open = d.orders.filter(o => o.status === "submitted");
+  const waits = d.practice_signups.filter(s => s.waitlisted).length;
+  const next = d.meets.filter(m => m.kind !== "closure" && m.start_date >= today)[0];
+  const hol = d.holiday_days.filter(h => h.day >= today);
+  const sn = subnav("overview", [["summary", "Summary"], ["attention", "To fix", (under.length + missing.length) || "", true], ["spots", "Spots", waits || "", true], ...(hol.length ? [["holiday", "Holidays"]] : [])]);
+  let body = "";
+  if (sn.cur === "summary") {
+    body = `<section class="stat">
+      <button class="card stat-btn" data-act="tab" data-tab="roster"><span class="eyebrow">Athletes</span><b>${act.length}</b><span class="small muted">${d.families.length} families</span></button>
+      <button class="card stat-btn" data-act="sub" data-k="overview" data-v="attention"><span class="eyebrow">Under hours</span><b>${under.length}</b><span class="small muted">below minimum</span></button>
+      <button class="card stat-btn" data-act="sub" data-k="overview" data-v="spots"><span class="eyebrow">Waitlisted</span><b>${waits}</b><span class="small muted">practice spots</span></button>
+      <button class="card stat-btn" data-act="tab" data-tab="orders" data-sub="new"><span class="eyebrow">New orders</span><b>${open.length}</b><span class="small muted">to place</span></button>
+    </section>
+    ${next ? `<section class="card stack"><span class="eyebrow">Next meet</span><h3>${esc(next.name)}</h3><div class="small muted">${dateRange(next.start_date, next.end_date).md} · ${esc(next.location || "")}</div>${rsvpTable(next)}</section>` : ""}`;
+  } else if (sn.cur === "attention") {
+    body = `<section class="card stack"><h3>Below required hours <span class="pill warn">${under.length}</span></h3>${under.length ? `<div class="list">${under.map(a => `<div class="li"><div class="grow">${esc(fullName(a))} <span class="small muted">${esc(team(a.team).name)}</span></div><span class="pill warn tnum">${hoursOf(a.id)} / ${team(a.team).min_hours} hrs</span></div>`).join("")}</div>` : `<div class="muted small">Everyone has enough hours.</div>`}</section>
+      <section class="card stack"><h3>Missing a phone or email <span class="pill bad">${missing.length}</span></h3>${missing.length ? `<div class="list">${missing.map(f => `<div class="li"><div class="grow">${esc(d.athletes.filter(a => a.family_id === f.id).map(fullName).join(", ") || "No athletes")} <div class="small muted">${esc(f.p1_name || "No parent name")}</div></div><button class="btn sm" data-act="form" data-table="families" data-id="${f.id}">Fix</button></div>`).join("")}</div>` : `<div class="muted small">Every family has contact info.</div>`}</section>`;
+  } else if (sn.cur === "spots") {
+    body = `<section class="card stack"><div class="list">${d.practice_options.map(o => { const ro = rosterOf(o.id), f = ro.filter(r => !r.waitlisted).length, w = ro.length - f;
+      return `<div class="li"><div class="grow"><b>${esc(o.label)}</b> <span class="small muted">${esc((o.teams || []).map(c => team(c).name).join(", "))} · ${esc(o.schedule)}</span><div class="meter" style="margin-top:6px"><i style="width:${Math.min(100, f / o.capacity * 100)}%"></i></div></div><span class="tnum small">${f}/${o.capacity}</span>${w ? `<span class="pill warn">${w} waiting</span>` : ""}</div>`; }).join("")}</div></section>`;
+  } else {
+    body = `<section class="card stack"><div class="row between"><h3>Who's coming on holiday days</h3><button class="btn sm" data-act="export" data-what="holiday">Export</button></div>
+      <div class="tablewrap"><table><thead><tr><th>Team</th>${hol.map(h => `<th class="n">${esc(h.label.replace(" Monday", " Mon").replace(" Tuesday", " Tue"))}<br>${fmtDay(h.day).split(", ")[1]}</th>`).join("")}</tr></thead><tbody>
+      ${d.teams.map(t => { const ath = act.filter(a => a.team === t.code); if (!ath.length) return ""; return `<tr><td>${esc(t.name)}</td>${hol.map(h => { const y = ath.filter(a => holOf(a.id, h.id) === true).length, nr = ath.filter(a => holOf(a.id, h.id) == null).length; return `<td class="n"><b>${y}</b> yes${nr ? `<div class="muted small">${nr} no reply</div>` : ""}</td>`; }).join("")}</tr>`; }).join("")}
+      </tbody></table></div></section>`;
+  }
+  return `<div class="stack-lg">${pageHead("Manager", "Team at a glance")}${sn.html}${body}</div>`;
+}
+
+function mRoster() {
+  const d = S.d, q = S.ui.q.trim().toLowerCase(); if (S.ui.rosterTeam == null) S.ui.rosterTeam = d.teams[0]?.code || "all"; const tf = q ? "all" : S.ui.rosterTeam;
+  const flagsOf = a => { const f = d.families.find(x => x.id === a.family_id) || {}; return [!f.p1_email && "no email", !f.p1_phone && "no phone", !a.leo_size && "no sizes", a.active === false && "inactive"].filter(Boolean); };
+  const needs = d.athletes.filter(a => flagsOf(a).length).length;
+  const sn = subnav("roster", [["contacts", "Contacts"], ["sizes", "Sizes"], ["needs", "Missing", needs || "", true]]);
+  let ath = d.athletes.slice().sort((x, y) => (team(x.team).sort - team(y.team).sort) || fullName(x).localeCompare(fullName(y)));
+  if (sn.cur === "needs") ath = ath.filter(a => flagsOf(a).length);
+  if (tf !== "all") ath = ath.filter(a => a.team === tf);
+  if (q) ath = ath.filter(a => { const f = d.families.find(x => x.id === a.family_id) || {}; return [fullName(a), f.p1_name, f.p2_name, f.p1_email, f.p2_email].join(" ").toLowerCase().includes(q); });
+  const row = a => { if (sn.cur === "sizes") return sizeRow(a); const f = d.families.find(x => x.id === a.family_id) || {}, st = hoursStatus(a), flags = flagsOf(a);
+    return `<div class="li"><div class="grow"><b>${esc(fullName(a))}</b> <span class="small muted">${esc(team(a.team).name)} · ${esc(a.level || "")}</span>
+      <div class="small muted">${esc(f.p1_name || "No parent on file")}${f.p1_phone ? " · " + esc(f.p1_phone) : ""}${f.p1_email ? " · " + esc(f.p1_email) : ""}</div>
+      <div class="row" style="margin-top:4px"><span class="pill ${st.cls} tnum">${st.h} hrs</span>${flags.map(x => `<span class="pill bad">${x}</span>`).join("")}</div></div>
+      <div class="stack" style="gap:6px"><button class="btn sm" data-act="form" data-table="athletes" data-id="${a.id}">Edit</button>${f.id ? `<button class="btn sm" data-act="form" data-table="families" data-id="${f.id}">Family</button>` : ""}</div></div>`; };
+  return `<div class="stack-lg">${pageHead("", "Roster", `<button class="btn sm" data-act="export" data-what="roster">Export</button><button class="btn sm" data-act="form" data-table="families">Add family</button><button class="btn sm primary" data-act="form" data-table="athletes">Add athlete</button>`)}${sn.html}
+    <section class="stack" style="gap:8px"><div class="chips"><button class="chip" data-act="rosterTeam" data-v="all" aria-pressed="${tf === "all"}">All teams</button>${d.teams.map(t => `<button class="chip" data-act="rosterTeam" data-v="${t.code}" aria-pressed="${tf === t.code}">${esc(t.name)} (${d.athletes.filter(a => a.team === t.code).length})</button>`).join("")}</div>
+    <div class="field"><input id="ros-q" type="search" placeholder="Search all teams by athlete, parent or email" value="${esc(S.ui.q)}" data-input="q" aria-label="Search roster"></div></section>
+    <section class="card" style="padding:4px 16px"><div class="list">${ath.map(row).join("") || `<div class="empty">No athletes match.</div>`}</div></section></div>`;
+}
+
+const PGROUPS = [["L1", "Level 1", ["L1"]], ["L2", "Level 2", ["L2"]], ["XS", "Silver", ["XS"]], ["XG", "Gold+", ["XG", "XP", "XD"]], ["TT", "T&T", ["TT"]]];
+function mPractice() {
+  const d = S.d;
+  const groups = PGROUPS.map(([k, l, lv]) => { const codes = d.teams.filter(t => lv.includes(t.level)).map(t => t.code); return { k, l, codes, opts: d.practice_options.filter(o => (o.teams || []).some(c => codes.includes(c))) }; }).filter(g => g.codes.length);
+  const waitsIn = g => d.practice_signups.filter(s => s.waitlisted && g.opts.some(o => o.id === s.option_id)).length;
+  const showRules = S.ui.sub.mpractice === "rules";
+  const sn = subnav("mpractice", [...groups.map(g => [g.k, g.l, waitsIn(g) || "", true])]);
+  if (showRules) { S.ui.sub.mpractice = "rules"; sn.html = ""; }
+  let body = "";
+  if (showRules) {
+    body = `<section class="card stack"><div class="row between"><h3>Hours each team needs</h3><button class="btn sm" data-act="sub" data-k="mpractice" data-v="${groups[0].k}">Done</button></div><div class="list">${d.teams.map(t => `<div class="li"><div class="grow"><b>${esc(t.name)}</b> <span class="small muted">${t.signup_mode === "group" ? "Pick one group" : "Pick days"} · ${t.min_hours ?? "–"}${t.max_hours != null && t.max_hours !== t.min_hours ? "–" + t.max_hours : ""} hrs a week</span></div><button class="btn sm" data-act="form" data-table="teams" data-id="${t.code}">Edit</button></div>`).join("")}</div></section>`;
+  } else {
+    const g = groups.find(x => x.k === sn.cur), ath = d.athletes.filter(a => a.active !== false && g.codes.includes(a.team));
+    const under = ath.filter(a => { const t = team(a.team); return t.min_hours != null && hoursOf(a.id) < t.min_hours; });
+    const nm = s => { const a = d.athletes.find(x => x.id === s.athlete_id); return a ? fullName(a) : "?"; };
+    body = `<section class="card row between"><div><b>${ath.length} athletes</b> <span class="small muted">${esc(g.codes.map(c => team(c).name).join(", "))}</span></div>${under.length ? `<details><summary><span class="pill warn">${under.length} under hours</span></summary><div class="names">${under.map(a => `<span class="pill line">${esc(fullName(a))} · ${hoursOf(a.id)} hrs</span>`).join("")}</div></details>` : `<span class="pill ok">Everyone has enough hours</span>`}</section>
+    ${g.opts.length ? g.opts.map(o => { const subs = d.practice_signups.filter(s => s.option_id === o.id).sort(by("created_at")), f = subs.filter(s => !s.waitlisted), w = subs.filter(s => s.waitlisted);
+      return `<article class="card stack"><div class="row between"><div><h3>${esc(o.label)}</h3><div class="small muted">${esc(o.schedule)} · ${o.hours} hrs${o.note ? " · " + esc(o.note) : ""}</div></div><div class="row"><span class="pill ${f.length >= o.capacity ? "bad" : "ok"} tnum">${f.length}/${o.capacity}</span><button class="btn sm" data-act="form" data-table="practice_options" data-id="${o.id}">Edit</button></div></div>
+        <details><summary>Signed up (${f.length})</summary><div class="names">${f.map(s => `<span class="pill line">${esc(nm(s))} <button class="copy" data-act="mremove" data-a="${s.athlete_id}" data-o="${o.id}" aria-label="Remove ${esc(nm(s))}">${S.armed === "mr-" + s.athlete_id + o.id ? "Confirm" : "×"}</button></span>`).join("") || `<span class="muted small">No sign-ups</span>`}</div></details>
+        ${w.length ? `<div class="stack" style="gap:6px"><span class="eyebrow">Waitlist</span><div class="names">${w.map((s, i) => `<span class="pill warn">${i + 1}. ${esc(nm(s))} <button class="copy" data-act="promote" data-a="${s.athlete_id}" data-o="${o.id}">Give spot</button></span>`).join("")}</div></div>` : ""}</article>`; }).join("") : `<div class="card empty">No practice times posted for ${esc(g.l)} yet.</div>`}`;
+  }
+  return `<div class="stack-lg">${pageHead("", "Practice", `<button class="btn sm" data-act="sub" data-k="mpractice" data-v="rules">Hour rules</button><button class="btn sm" data-act="export" data-what="signups">Export</button><button class="btn sm primary" data-act="form" data-table="practice_options">Add practice</button>`)}${sn.html}${body}</div>`;
+}
+
+function mMeets() {
+  const d = S.d, today = todayISO();
+  const up = d.meets.filter(m => (m.end_date || m.start_date) >= today), past = d.meets.filter(m => (m.end_date || m.start_date) < today).reverse();
+  const noPkg = d.athletes.filter(a => a.active !== false && pkgsFor(a.level).length && !a.meet_package).length;
+  const sn = subnav("mmeets", [["upcoming", "Upcoming", up.filter(m => m.kind !== "closure").length], ["fees", "Fees", noPkg || "", true], ["past", "Past"]]);
+  const mcard = m => { const r = dateRange(m.start_date, m.end_date); return `<article class="card stack" style="gap:8px"><div class="row between"><div><span class="small muted">${r.md} · ${r.wd}</span><h3>${esc(m.name)}</h3><div class="small muted">${esc([m.host, m.location].filter(Boolean).join(" · "))} ${m.kind !== "meet" ? "· " + m.kind : ""}</div></div><button class="btn sm" data-act="form" data-table="meets" data-id="${m.id}">Edit</button></div>
+    ${m.kind === "closure" ? "" : `<div class="row">${(m.federations || []).map(f => `<span class="fed ${esc(f.replace(/\W/g, ""))}">${esc(f)}</span>`).join("")}${(m.levels || []).map(l => `<span class="pill line">${l}</span>`).join("")}</div>${rsvpTable(m)}`}</article>`; };
+  let body = "";
+  if (sn.cur === "fees") body = `<section class="card stack"><div class="row between"><h3>Packages</h3><div class="row"><button class="btn sm" data-act="export" data-what="packages">Export choices</button><button class="btn sm" data-act="form" data-table="meet_packages">Add</button></div></div><div class="list">${d.meet_packages.map(p => `<div class="li"><div class="grow"><b>${esc(p.name)}</b> <span class="small muted">${esc((p.levels || []).join(", "))}</span><div class="small muted tnum">${money(p.full_price)} full · ${money(p.half_price)} half · ${money(p.monthly_price)}/mo · ${d.athletes.filter(a => a.meet_package === p.id).length} chose this</div></div><button class="btn sm" data-act="form" data-table="meet_packages" data-id="${p.id}">Edit</button></div>`).join("")}</div></section>`;
+  else { const list = sn.cur === "upcoming" ? up : past; body = list.length ? `<section class="stack">${list.map(mcard).join("")}</section>` : `<div class="card empty">Nothing here yet.</div>`; }
+  return `<div class="stack-lg">${pageHead("", "Meets", `<button class="btn sm" data-act="export" data-what="rsvps">Export RSVPs</button><button class="btn sm primary" data-act="form" data-table="meets">Add meet</button>`)}${sn.html}${body}</div>`;
+}
+
+function mOrders() {
+  const d = S.d, oa = curA();
+  if (oa) return `<div class="stack-lg"><section class="card row between" style="background:var(--surface-2)"><div><span class="eyebrow">Manager order</span><div><b>Ordering for ${esc(fullName(oa))}</b> <span class="small muted">${esc(team(oa.team).name)}</span></div><div class="small muted">The order goes on this family's account, just like a parent order.</div></div><div class="row"><button class="btn sm" data-act="pickath" data-then="order">Change athlete</button><button class="btn sm primary" data-act="mdone">Done</button></div></section>${pShop(oa)}</div>`;
+  const all = d.orders.slice().sort(by("created_at")).reverse();
+  const G = { new: ["submitted"], progress: ["ordered", "ready"], done: ["picked_up", "cancelled"] };
+  const cnt = k => all.filter(o => G[k].includes(o.status)).length;
+  const sn = subnav("morders", [["new", "New", cnt("new") || "", true], ["progress", "In progress", cnt("progress") || ""], ["done", "Done"], ["totals", "Totals"]]);
+  let body = "";
+  if (sn.cur === "totals") {
+    const live = d.orders.filter(o => o.status !== "cancelled").map(o => o.id), tot = {};
+    d.order_items.filter(i => live.includes(i.order_id)).forEach(i => { const k = i.item_name + (Object.keys(i.choices || {}).length ? " — " + Object.entries(i.choices).map(([a, b]) => `${a}: ${b}`).join(", ") : ""); tot[k] = (tot[k] || 0) + i.qty; });
+    body = `<section class="card stack"><div class="row between"><p class="small muted" style="margin:0">Every item and size across orders that aren't cancelled. Use this to place the order with the vendor.</p><button class="btn sm" data-act="export" data-what="totals">Export</button></div>
+      <div class="tablewrap"><table><thead><tr><th>Item & size</th><th class="n">Qty</th></tr></thead><tbody>${Object.entries(tot).sort().map(([k, v]) => `<tr><td style="white-space:normal">${esc(k)}</td><td class="n">${v}</td></tr>`).join("") || `<tr><td colspan="2" class="muted">No orders yet</td></tr>`}</tbody></table></div></section>`;
+  } else {
+    const os = all.filter(o => G[sn.cur].includes(o.status));
+    body = os.length ? `<section class="stack">${os.map(o => orderCard(o, true)).join("")}</section>` : `<div class="card empty">No orders here.</div>`;
+  }
+  return `<div class="stack-lg">${pageHead("", "Orders", `<button class="btn sm primary" data-act="pickath" data-then="order">Order for an athlete</button><button class="btn sm" data-act="export" data-what="orders">Export</button>`)}${sn.html}${body}</div>`;
+}
+
+function mSetup() {
+  const d = S.d;
+  const sn = subnav("setup", [["store", "Store", d.store_items.length], ["holidays", "Holidays"], ["settings", "Settings"]]);
+  let body = "";
+  if (sn.cur === "store") body = `<section class="card stack"><div class="row between"><h3>Store items</h3><button class="btn sm primary" data-act="form" data-table="store_items">Add item</button></div>
+    <div class="list">${d.store_items.map(it => `<div class="li"><div class="grow"><b>${esc(it.name)}</b> <span class="small muted">${money(it.price)}${Object.keys(it.level_prices || {}).length ? " · " + Object.entries(it.level_prices).map(([k, v]) => `${k} ${money(v)}`).join(", ") : ""} · ${(it.teams || []).length ? esc(it.teams.join(", ")) : "all teams"}</span></div>${it.active === false ? `<span class="pill line">Hidden</span>` : ""}<button class="btn sm" data-act="form" data-table="store_items" data-id="${it.id}">Edit</button></div>`).join("")}</div></section>`;
+  else if (sn.cur === "holidays") body = `<section class="card stack"><div class="row between"><h3>Holiday practice days</h3><button class="btn sm primary" data-act="form" data-table="holiday_days">Add day</button></div>
+    <div class="list">${d.holiday_days.map(h => `<div class="li"><div class="grow"><b>${esc(h.label)}</b> <span class="small muted">${fmtDay(h.day)}</span></div><button class="btn sm" data-act="form" data-table="holiday_days" data-id="${h.id}">Edit</button></div>`).join("")}</div></section>`;
+  else body = `<section class="card stack"><div class="list">${d.settings.map(s => `<div class="li"><div class="grow"><b>${esc(s.key.replace(/_/g, " "))}</b><div class="small muted">${esc(s.value)}</div></div><button class="btn sm" data-act="form" data-table="settings" data-id="${esc(s.key)}">Edit</button></div>`).join("")}</div></section>`;
+  return `<div class="stack-lg">${pageHead("", "Setup")}${sn.html}${body}</div>`;
+}
+
+function waitPos(s) { return S.d.roster.filter(r => r.option_id === s.option_id && r.waitlisted).sort(by("created_at")).findIndex(r => r.athlete_id === s.athlete_id) + 1 || 1; }
+
 function optCard(o, a, t) {
   const ro = rosterOf(o.id), filled = ro.filter(r => !r.waitlisted), wait = ro.filter(r => r.waitlisted);
   const mine = signupsOf(a.id).find(s => s.option_id === o.id), left = Math.max(0, o.capacity - filled.length), full = left === 0;
@@ -734,41 +981,6 @@ function timeline(list, a, showLv) {
   if (past.length) out += `<details style="margin-top:12px"><summary>Earlier this season (${past.length})</summary><div class="stack" style="margin-top:10px">${past.map(m => meetCard(m, a, true, showLv)).join("")}</div></details>`;
   return out || `<div class="card empty">No meets match these filters.</div>`;
 }
-function pMeets(a) {
-  const scope = S.ui.meetScope, fed = S.ui.fed;
-  let list = scope === "mine" ? meetsFor(a.level) : S.d.meets.slice();
-  if (fed !== "all") list = list.filter(m => m.kind === "closure" || (m.federations || []).includes(fed));
-  const pk = pkgsFor(a.level), chosen = S.d.meet_packages.find(p => p.id === a.meet_package);
-  return `<div class="stack-lg">
-  <section class="stack"><span class="eyebrow">Spring competition · ${esc(S.d.set.season || "")}</span><h1>Meet schedule</h1>
-    <div class="chips" role="group" aria-label="Whose meets"><button class="chip" data-act="meetScope" data-v="mine" aria-pressed="${scope === "mine"}">${esc(a.first_name)}'s meets · ${esc(LEVELS[a.level] || a.level)}</button><button class="chip" data-act="meetScope" data-v="all" aria-pressed="${scope === "all"}">All teams</button></div>
-    <div class="chips" role="group" aria-label="Federation"><button class="chip" data-act="fed" data-v="all" aria-pressed="${fed === "all"}">All</button>${FEDS.filter(f => S.d.meets.some(m => (m.federations || []).includes(f))).map(f => `<button class="chip" data-act="fed" data-v="${f}" aria-pressed="${fed === f}">${f}</button>`).join("")}</div>
-  </section>
-  ${pk.length ? `<section class="card stack"><div class="row between"><div><h3>Meet fees</h3><div class="small muted">${chosen ? `${esc(chosen.name)} · ${esc(a.meet_plan || "plan not picked")}` : "Not chosen yet"}</div></div><button class="btn sm ${chosen ? "" : "primary"}" data-act="pkg">${chosen ? "Change" : "Choose package"}</button></div>
-    ${chosen ? `<div class="small muted">${esc(chosen.due_note || "")}</div>` : ""}</section>` : ""}
-  <section class="stack">${timeline(list, a, scope === "all")}</section>
-  <p class="small muted">${a.level === "XG" || a.level === "XP" || a.level === "XD" ? "If competing in both USAG and TAAF, compete in at least 3 TAAF Qualifiers to qualify for TAAF State." : "Compete in 3 of the TAAF Qualifiers to qualify for your level's TAAF State meet."}</p>
-  </div>`;
-}
-
-function pShop(a) {
-  const items = S.d.store_items.filter(it => itemFits(it, a));
-  const myOrders = S.d.orders.filter(o => o.family_id === a.family_id).sort(by("created_at")).reverse();
-  const sf = Object.entries(SIZE_FIELDS).filter(([, v]) => !v.teams || v.teams.includes(a.team));
-  return `<div class="stack-lg">
-  <section class="stack"><span class="eyebrow">Apparel & gear · ${esc(team(a.team).name)}</span><h1>Shop for ${esc(a.first_name)}</h1>
-    <p class="muted small" style="margin:0">Only items for ${esc(team(a.team).name)} are shown. ${esc(S.d.set.payment_note || "")}</p></section>
-  <section class="card stack"><div class="row between"><h3>${esc(a.first_name)}'s sizes</h3><button class="btn sm" data-act="sizes">Update sizes</button></div>
-    <div class="sizes">${sf.map(([k, v]) => `<div class="size"><small>${v.label}</small><b>${esc(a[k] || "—")}</b></div>`).join("")}</div>
-    <div class="small muted">Sizes fill in automatically when you order. Growing? Use "Update sizes" and tap + to size up.</div></section>
-  <section class="grid2">${items.map(it => { const p = priceFor(it, a); return `<article class="card item">
-    <div class="row between"><span class="eyebrow">${it.category === "family" ? "Parents & siblings" : "Athlete"}</span>${it.required_note ? `<span class="pill warn">Required*</span>` : ""}</div>
-    <h3>${esc(it.name)}</h3><div class="price">${money(p)}</div>
-    ${it.description ? `<div class="small muted">${esc(it.description)}</div>` : ""}${it.required_note ? `<div class="small">*${esc(it.required_note)}</div>` : ""}
-    <div style="margin-top:auto"><button class="btn block" data-act="additem" data-id="${it.id}">Add to order</button></div></article>`; }).join("")}</section>
-  <section class="stack"><h2>${S.role === "manager" ? "This family's orders" : "Your orders"}</h2>${myOrders.length ? myOrders.map(o => orderCard(o, S.role === "manager")).join("") : `<div class="card muted">No orders yet.</div>`}</section>
-  </div>`;
-}
 function orderCard(o, mgr) {
   const items = S.d.order_items.filter(i => i.order_id === o.id), a = S.d.athletes.find(x => x.id === o.athlete_id), f = S.d.families.find(x => x.id === o.family_id);
   const cls = { submitted: "warn", ordered: "line", ready: "lime", picked_up: "ok", cancelled: "bad" }[o.status] || "line";
@@ -778,29 +990,17 @@ function orderCard(o, mgr) {
     <div class="row between"><span class="small muted">${o.note ? esc(o.note) : "Tax added"}</span><b class="tnum">${money(o.total)}</b></div></article>`;
 }
 
-function pTeam(a) {
-  const scope = S.ui.dirScope, ride = S.ui.ride, q = S.ui.q.trim().toLowerCase();
-  let fams = S.d.directory.slice();
-  if (scope === "mine") fams = fams.filter(f => (f.athletes || []).some(x => x.team === a.team));
-  if (ride === "offer") fams = fams.filter(f => f.carpool === "offer" || f.carpool === "both");
-  if (ride === "need") fams = fams.filter(f => f.carpool === "need" || f.carpool === "both");
-  if (q) fams = fams.filter(f => [f.p1_name, f.p2_name, f.city, ...(f.athletes || []).map(fullName)].join(" ").toLowerCase().includes(q));
-  fams.sort((x, y) => fullName((x.athletes || [])[0] || {}).localeCompare(fullName((y.athletes || [])[0] || {})));
-  const listed = S.d.myFamily?.show_in_directory;
-  return `<div class="stack-lg">
-  <section class="stack"><span class="eyebrow">Team directory</span><h1>Families & carpools</h1>
-    <div class="field"><label for="dir-q" class="sr">Search</label><input id="dir-q" type="search" placeholder="Search by athlete, parent or city" value="${esc(S.ui.q)}" data-input="q"></div>
-    <div class="chips" role="group"><button class="chip" data-act="dirScope" data-v="mine" aria-pressed="${scope === "mine"}">${esc(team(a.team).name)}</button><button class="chip" data-act="dirScope" data-v="all" aria-pressed="${scope === "all"}">Whole team</button>
-      <button class="chip" data-act="ride" data-v="${ride === "offer" ? "all" : "offer"}" aria-pressed="${ride === "offer"}">Can give rides</button><button class="chip" data-act="ride" data-v="${ride === "need" ? "all" : "need"}" aria-pressed="${ride === "need"}">Need rides</button></div>
-    <div class="small muted">${listed === false ? `Your family is <b>not listed</b>. ` : ""}Only families who chose to be listed appear here. <button class="linkbtn" data-act="family">Change your listing or carpool</button></div>
-  </section>
-  <section class="stack">${fams.length ? fams.map(famCard).join("") : `<div class="card empty">No families match.</div>`}</section></div>`;
-}
 function contactLine(name, email, phone) {
   if (!name && !email && !phone) return "";
   return `<div class="contact"><b>${esc(name || "")}</b>${phone ? `<span class="row" style="gap:4px"><a href="tel:${esc(phone.replace(/[^\d+]/g, ""))}" class="sel tnum">${esc(phone)}</a><button class="copy" data-act="copy" data-v="${esc(phone)}">Copy</button></span>` : ""}${email ? `<span class="row" style="gap:4px"><a href="mailto:${esc(email)}" class="sel">${esc(email)}</a><button class="copy" data-act="copy" data-v="${esc(email)}">Copy</button></span>` : ""}</div>`;
 }
 function famCard(f) {
+  const cp = f.carpool && f.carpool !== "none";
+  return `<details class="card famrow"><summary><div class="grow"><div class="row" style="gap:4px 10px">${(f.athletes || []).map(x => `<b class="fam-name">${esc(fullName(x))}</b>`).join('<span class="muted">·</span>')}</div>
+    <div class="small muted">${esc([...new Set((f.athletes || []).map(x => team(x.team).name))].join(", "))}${f.city ? " · " + esc(f.city) : ""}</div></div>${cp ? `<span class="pill ${f.carpool === "need" ? "warn" : "lime"}">${f.carpool === "need" ? "Needs rides" : f.carpool === "offer" ? "Gives rides" : "Gives & needs"}</span>` : ""}<span class="chev" aria-hidden="true"></span></summary>
+    <div class="fam" style="margin-top:12px">${contactLine(f.p1_name, f.p1_email, f.p1_phone)}${contactLine(f.p2_name, f.p2_email, f.p2_phone)}${cp && f.carpool_note ? `<div class="small">${esc(f.carpool_note)}</div>` : ""}</div></details>`;
+}
+function famCardOld(f) {
   const cp = f.carpool && f.carpool !== "none";
   return `<article class="card fam"><div class="row between"><div class="row">${(f.athletes || []).map(x => `<span class="row" style="gap:6px"><b class="fam-name">${esc(fullName(x))}</b><span class="pill line">${esc(team(x.team).name)}</span></span>`).join("")}</div>${f.city ? `<span class="small muted">${esc(f.city)}</span>` : ""}</div>
     ${contactLine(f.p1_name, f.p1_email, f.p1_phone)}${contactLine(f.p2_name, f.p2_email, f.p2_phone)}
@@ -808,54 +1008,10 @@ function famCard(f) {
 }
 
 /* ---------------- MANAGER ---------------- */
-function mOverview() {
-  const d = S.d, act = d.athletes.filter(a => a.active !== false), today = todayISO();
-  const under = act.filter(a => { const t = team(a.team); return t.min_hours != null && hoursOf(a.id) < t.min_hours; });
-  const missing = d.families.filter(f => !f.p1_email || !f.p1_phone);
-  const open = d.orders.filter(o => o.status === "submitted");
-  const waits = d.practice_signups.filter(s => s.waitlisted).length;
-  const next = d.meets.filter(m => m.kind !== "closure" && m.start_date >= today)[0];
-  const hol = d.holiday_days.filter(h => h.day >= today);
-  return `<div class="stack-lg">
-  <section class="stack"><span class="eyebrow">Manager</span><h1>Team at a glance</h1></section>
-  <section class="stat">
-    <div class="card"><span class="eyebrow">Athletes</span><b>${act.length}</b><span class="small muted">${d.families.length} families</span></div>
-    <div class="card"><span class="eyebrow">Under hours</span><b>${under.length}</b><span class="small muted">below their minimum</span></div>
-    <div class="card"><span class="eyebrow">Waitlisted</span><b>${waits}</b><span class="small muted">practice spots</span></div>
-    <div class="card"><span class="eyebrow">New orders</span><b>${open.length}</b><span class="small muted">not yet ordered</span></div>
-  </section>
-  ${missing.length ? `<section class="card stack"><h3>Families missing a phone or email</h3><div class="list">${missing.map(f => `<div class="li"><div class="grow">${esc(f.p1_name || "No parent name")} <span class="small muted">${esc(S.d.athletes.filter(a => a.family_id === f.id).map(fullName).join(", "))}</span></div><button class="btn sm" data-act="form" data-table="families" data-id="${f.id}">Fix</button></div>`).join("")}</div></section>` : ""}
-  ${hol.length ? `<section class="card stack"><div class="row between"><h3>Holiday practice headcount</h3><button class="btn sm" data-act="export" data-what="holiday">Export</button></div>
-    <div class="tablewrap"><table><thead><tr><th>Team</th>${hol.map(h => `<th class="n">${esc(h.label.replace(" Monday", " Mon").replace(" Tuesday", " Tue"))}<br>${fmtDay(h.day).split(", ")[1]}</th>`).join("")}</tr></thead><tbody>
-    ${d.teams.map(t => { const ath = act.filter(a => a.team === t.code); if (!ath.length) return ""; return `<tr><td>${esc(t.name)}</td>${hol.map(h => { const y = ath.filter(a => holOf(a.id, h.id) === true).length, nr = ath.filter(a => holOf(a.id, h.id) == null).length; return `<td class="n"><b>${y}</b> yes${nr ? `<div class="muted small">${nr} no reply</div>` : ""}</td>`; }).join("")}</tr>`; }).join("")}
-    </tbody></table></div></section>` : ""}
-  <section class="card stack"><h3>Practice spots</h3><div class="list">${d.practice_options.map(o => { const ro = rosterOf(o.id), f = ro.filter(r => !r.waitlisted).length, w = ro.length - f;
-    return `<div class="li"><div class="grow"><b>${esc(o.label)}</b> <span class="small muted">${esc((o.teams || []).join(", "))} · ${esc(o.schedule)}</span><div class="meter" style="margin-top:6px"><i style="width:${Math.min(100, f / o.capacity * 100)}%"></i></div></div><span class="tnum small">${f}/${o.capacity}</span>${w ? `<span class="pill warn">${w} waiting</span>` : ""}</div>`; }).join("")}</div></section>
-  ${next ? `<section class="card stack"><h3>Next meet · ${esc(next.name)}</h3><div class="small muted">${dateRange(next.start_date, next.end_date).md} · ${esc(next.location || "")}</div>${rsvpTable(next)}</section>` : ""}
-  ${under.length ? `<section class="card stack"><h3>Below required hours</h3><div class="list">${under.map(a => `<div class="li"><div class="grow">${esc(fullName(a))} <span class="small muted">${esc(team(a.team).name)}</span></div><span class="pill warn tnum">${hoursOf(a.id)} / ${team(a.team).min_hours} hrs</span></div>`).join("")}</div></section>` : ""}
-  </div>`;
-}
 function rsvpTable(m) {
   const ath = S.d.athletes.filter(a => a.active !== false && (m.levels || []).includes(a.level));
   const c = k => ath.filter(a => (rsvpOf(a.id, m.id) || "none") === k).length;
   return `<div class="row"><span class="pill ok">${c("yes")} yes</span><span class="pill warn">${c("maybe")} maybe</span><span class="pill bad">${c("no")} no</span><span class="pill line">${c("none")} no reply</span></div>`;
-}
-function mRoster() {
-  const d = S.d, tf = S.ui.rosterTeam, q = S.ui.q.trim().toLowerCase();
-  let ath = d.athletes.slice().sort((x, y) => (team(x.team).sort - team(y.team).sort) || fullName(x).localeCompare(fullName(y)));
-  if (tf !== "all") ath = ath.filter(a => a.team === tf);
-  if (q) ath = ath.filter(a => { const f = d.families.find(x => x.id === a.family_id) || {}; return [fullName(a), f.p1_name, f.p2_name, f.p1_email, f.p2_email].join(" ").toLowerCase().includes(q); });
-  return `<div class="stack-lg">
-  <section class="stack"><div class="row between"><h1>Roster</h1><div class="row"><button class="btn sm" data-act="export" data-what="roster">Export</button><button class="btn sm" data-act="form" data-table="families">Add family</button><button class="btn sm primary" data-act="form" data-table="athletes">Add athlete</button></div></div>
-    <div class="field"><input id="ros-q" type="search" placeholder="Search athletes, parents, emails" value="${esc(S.ui.q)}" data-input="q" aria-label="Search roster"></div>
-    <div class="chips"><button class="chip" data-act="rosterTeam" data-v="all" aria-pressed="${tf === "all"}">All (${d.athletes.length})</button>${d.teams.map(t => `<button class="chip" data-act="rosterTeam" data-v="${t.code}" aria-pressed="${tf === t.code}">${esc(t.name)} (${d.athletes.filter(a => a.team === t.code).length})</button>`).join("")}</div>
-    <div class="seg" role="group" aria-label="Show"><button data-act="rosterMode" data-v="contacts" aria-pressed="${S.ui.rosterMode === "contacts"}">Contacts</button><button data-act="rosterMode" data-v="sizes" aria-pressed="${S.ui.rosterMode === "sizes"}">Sizes</button></div></section>
-  <section class="card" style="padding:4px 16px"><div class="list">${ath.map(a => { if (S.ui.rosterMode === "sizes") return sizeRow(a); const f = d.families.find(x => x.id === a.family_id) || {}, st = hoursStatus(a);
-    const flags = [!f.p1_email && "no email", !f.p1_phone && "no phone", !a.leo_size && "no sizes", a.active === false && "inactive"].filter(Boolean);
-    return `<div class="li"><div class="grow"><b>${esc(fullName(a))}</b> <span class="small muted">${esc(team(a.team).name)} · ${esc(a.level || "")}</span>
-      <div class="small muted">${esc(f.p1_name || "No parent on file")}${f.p1_phone ? " · " + esc(f.p1_phone) : ""}${f.p1_email ? " · " + esc(f.p1_email) : ""}</div>
-      <div class="row" style="margin-top:4px"><span class="pill ${st.cls} tnum">${st.h} hrs</span>${flags.map(x => `<span class="pill bad">${x}</span>`).join("")}</div></div>
-      <div class="stack" style="gap:6px"><button class="btn sm" data-act="form" data-table="athletes" data-id="${a.id}">Edit</button>${f.id ? `<button class="btn sm" data-act="form" data-table="families" data-id="${f.id}">Family</button>` : ""}</div></div>`; }).join("") || `<div class="empty">No athletes match.</div>`}</div></section></div>`;
 }
 function sizeRow(a) {
   const sf = Object.entries(SIZE_FIELDS).filter(([, v]) => !v.teams || v.teams.includes(a.team));
@@ -865,56 +1021,11 @@ function sizeRow(a) {
     ${a.sizes_updated_at ? `<div class="small muted" style="margin-top:4px">Updated ${new Date(a.sizes_updated_at).toLocaleDateString()}</div>` : missing ? `<div class="small muted" style="margin-top:4px">${missing} size${missing > 1 ? "s" : ""} missing</div>` : ""}</div>
     <div class="stack" style="gap:6px"><button class="btn sm" data-act="msizes" data-id="${a.id}">Edit sizes</button><button class="btn sm" data-act="morder" data-id="${a.id}">Order</button></div></div>`;
 }
-function mPractice() {
-  const d = S.d;
-  return `<div class="stack-lg">
-  <section class="row between"><h1>Practice</h1><div class="row"><button class="btn sm" data-act="export" data-what="signups">Export</button><button class="btn sm primary" data-act="form" data-table="practice_options">Add practice option</button></div></section>
-  <section class="card stack"><h3>Team requirements</h3><div class="list">${d.teams.map(t => `<div class="li"><div class="grow"><b>${esc(t.name)}</b> <span class="small muted">${t.signup_mode === "group" ? "Pick one group" : "Pick days"} · ${t.min_hours ?? "–"}${t.max_hours != null && t.max_hours !== t.min_hours ? "–" + t.max_hours : ""} hrs</span></div><button class="btn sm" data-act="form" data-table="teams" data-id="${t.code}">Edit</button></div>`).join("")}</div></section>
-  ${d.practice_options.map(o => { const subs = d.practice_signups.filter(s => s.option_id === o.id).sort(by("created_at")), f = subs.filter(s => !s.waitlisted), w = subs.filter(s => s.waitlisted);
-    const nm = s => { const a = d.athletes.find(x => x.id === s.athlete_id); return a ? fullName(a) : "?"; };
-    return `<article class="card stack"><div class="row between"><div><h3>${esc(o.label)}</h3><div class="small muted">${esc(o.schedule)} · ${o.hours} hrs · ${esc((o.teams || []).map(c => team(c).name).join(", "))}</div></div><div class="row"><span class="pill ${f.length >= o.capacity ? "bad" : "ok"} tnum">${f.length}/${o.capacity}</span><button class="btn sm" data-act="form" data-table="practice_options" data-id="${o.id}">Edit</button></div></div>
-      <div class="names">${f.map(s => `<span class="pill line">${esc(nm(s))} <button class="copy" data-act="mremove" data-a="${s.athlete_id}" data-o="${o.id}" aria-label="Remove ${esc(nm(s))}">${S.armed === "mr-" + s.athlete_id + o.id ? "Confirm" : "×"}</button></span>`).join("") || `<span class="muted small">No sign-ups</span>`}</div>
-      ${w.length ? `<div class="stack" style="gap:6px"><span class="eyebrow">Waitlist</span><div class="names">${w.map((s, i) => `<span class="pill warn">${i + 1}. ${esc(nm(s))} <button class="copy" data-act="promote" data-a="${s.athlete_id}" data-o="${o.id}">Give spot</button></span>`).join("")}</div></div>` : ""}</article>`; }).join("")}
-  </div>`;
-}
-function mMeets() {
-  const d = S.d;
-  return `<div class="stack-lg">
-  <section class="row between"><h1>Meets</h1><div class="row"><button class="btn sm" data-act="export" data-what="rsvps">Export RSVPs</button><button class="btn sm primary" data-act="form" data-table="meets">Add meet</button></div></section>
-  <section class="card stack"><div class="row between"><h3>Meet fee packages</h3><button class="btn sm" data-act="export" data-what="packages">Export choices</button></div><div class="list">${d.meet_packages.map(p => `<div class="li"><div class="grow"><b>${esc(p.name)}</b> <span class="small muted">${esc((p.levels || []).join(", "))} · ${money(p.full_price)} full · ${money(p.half_price)} half · ${money(p.monthly_price)}/mo</span><div class="small muted">${d.athletes.filter(a => a.meet_package === p.id).length} athletes chose this</div></div><button class="btn sm" data-act="form" data-table="meet_packages" data-id="${p.id}">Edit</button></div>`).join("")}</div><button class="btn sm" data-act="form" data-table="meet_packages">Add package</button></section>
-  <section class="stack">${d.meets.map(m => { const r = dateRange(m.start_date, m.end_date); return `<article class="card stack" style="gap:8px"><div class="row between"><div><span class="small muted">${r.md} · ${r.wd}</span><h3>${esc(m.name)}</h3><div class="small muted">${esc([m.host, m.location].filter(Boolean).join(" · "))} ${m.kind !== "meet" ? "· " + m.kind : ""}</div></div><button class="btn sm" data-act="form" data-table="meets" data-id="${m.id}">Edit</button></div>
-    ${m.kind === "closure" ? "" : `<div class="row">${(m.federations || []).map(f => `<span class="fed ${esc(f.replace(/\W/g, ""))}">${esc(f)}</span>`).join("")}${(m.levels || []).map(l => `<span class="pill line">${l}</span>`).join("")}</div>${rsvpTable(m)}`}</article>`; }).join("")}</section></div>`;
-}
-function mOrders() {
-  const d = S.d, f = S.ui.orderStatus, oa = curA();
-  if (oa) return `<div class="stack-lg"><section class="card row between" style="background:var(--surface-2)"><div><span class="eyebrow">Manager order</span><div><b>Ordering for ${esc(fullName(oa))}</b> <span class="small muted">${esc(team(oa.team).name)}</span></div><div class="small muted">The order goes on this family's account, just like a parent order.</div></div><div class="row"><button class="btn sm" data-act="pickath" data-then="order">Change athlete</button><button class="btn sm primary" data-act="mdone">Done</button></div></section>${pShop(oa)}</div>`;
-  let os = d.orders.slice().sort(by("created_at")).reverse();
-  if (f === "open") os = os.filter(o => ["submitted","ordered","ready"].includes(o.status)); else if (f !== "all") os = os.filter(o => o.status === f);
-  const live = d.orders.filter(o => o.status !== "cancelled").map(o => o.id);
-  const tot = {}; d.order_items.filter(i => live.includes(i.order_id)).forEach(i => { const k = i.item_name + (Object.keys(i.choices || {}).length ? " — " + Object.entries(i.choices).map(([a, b]) => `${a}: ${b}`).join(", ") : ""); tot[k] = (tot[k] || 0) + i.qty; });
-  return `<div class="stack-lg">
-  <section class="row between"><h1>Orders</h1><div class="row"><button class="btn sm primary" data-act="pickath" data-then="order">Order for an athlete</button><button class="btn sm" data-act="export" data-what="orders">Export orders</button><button class="btn sm" data-act="export" data-what="totals">Vendor totals</button></div></section>
-  <div class="chips">${[["open","Open"],["submitted","Submitted"],["ordered","Ordered"],["ready","Ready"],["picked_up","Picked up"],["all","All"]].map(([k, l]) => `<button class="chip" data-act="orderStatus" data-v="${k}" aria-pressed="${f === k}">${l}</button>`).join("")}</div>
-  <section class="card stack"><h3>Vendor totals</h3><p class="small muted" style="margin:0">Every item and size across orders that aren't cancelled. Use this to place the order with the vendor.</p>
-    <div class="tablewrap"><table><thead><tr><th>Item & size</th><th class="n">Qty</th></tr></thead><tbody>${Object.entries(tot).sort().map(([k, v]) => `<tr><td style="white-space:normal">${esc(k)}</td><td class="n">${v}</td></tr>`).join("") || `<tr><td colspan="2" class="muted">No orders yet</td></tr>`}</tbody></table></div></section>
-  <section class="stack">${os.map(o => orderCard(o, true)).join("") || `<div class="card empty">No orders here.</div>`}</section></div>`;
-}
-function mSetup() {
-  const d = S.d;
-  return `<div class="stack-lg"><h1>Setup</h1>
-  <section class="card stack"><div class="row between"><h3>Store items</h3><button class="btn sm primary" data-act="form" data-table="store_items">Add item</button></div>
-    <div class="list">${d.store_items.map(it => `<div class="li"><div class="grow"><b>${esc(it.name)}</b> <span class="small muted">${money(it.price)}${Object.keys(it.level_prices || {}).length ? " · " + Object.entries(it.level_prices).map(([k, v]) => `${k} ${money(v)}`).join(", ") : ""} · ${(it.teams || []).length ? esc(it.teams.join(", ")) : "all teams"}</span></div>${it.active === false ? `<span class="pill line">Hidden</span>` : ""}<button class="btn sm" data-act="form" data-table="store_items" data-id="${it.id}">Edit</button></div>`).join("")}</div></section>
-  <section class="card stack"><div class="row between"><h3>Holiday practice days</h3><button class="btn sm" data-act="form" data-table="holiday_days">Add day</button></div>
-    <div class="list">${d.holiday_days.map(h => `<div class="li"><div class="grow"><b>${esc(h.label)}</b> <span class="small muted">${fmtDay(h.day)}</span></div><button class="btn sm" data-act="form" data-table="holiday_days" data-id="${h.id}">Edit</button></div>`).join("")}</div></section>
-  <section class="card stack"><h3>Team settings</h3><div class="list">${d.settings.map(s => `<div class="li"><div class="grow"><b>${esc(s.key.replace(/_/g, " "))}</b><div class="small muted">${esc(s.value)}</div></div><button class="btn sm" data-act="form" data-table="settings" data-id="${esc(s.key)}">Edit</button></div>`).join("")}</div></section>
-  </div>`;
-}
-
-/* =====================================================================
-   SHEETS
-   ===================================================================== */
 function openSheet(s) { S.sheet = s; renderSheet(); setTimeout(() => { const f = document.querySelector(".sheet input:not([type=hidden]), .sheet select"); if (f && s.focus !== false) f.focus({ preventScroll: true }); }, 30); }
 function closeSheet() { S.sheet = null; renderSheet(); }
+function syncTop() { const h = document.querySelector(".top"); if (h) document.documentElement.style.setProperty("--top-h", h.offsetHeight + "px"); }
+window.addEventListener("resize", syncTop);
+function scrollToContent() { const n = document.querySelector(".subnav"); if (!n) return; const y = n.getBoundingClientRect().top + window.scrollY - (document.querySelector(".top")?.offsetHeight || 0) - 8; if (window.scrollY > y) window.scrollTo(0, Math.max(0, y)); }
 function renderSheet() {
   const root = $("#sheet-root"), s = S.sheet;
   if (!s) { root.innerHTML = ""; document.body.style.overflow = ""; return; }
@@ -1067,7 +1178,7 @@ document.addEventListener("click", async e => {
   if (k === "scrim" && e.target !== el) return;
   switch (k) {
     case "scrim": case "close": closeSheet(); break;
-    case "tab": closeSheet(); if (S.role === "manager") S.ui.mtab = ds.tab; else S.ui.tab = ds.tab; S.ui.q = ""; render(); window.scrollTo(0, 0); break;
+    case "tab": closeSheet(); if (ds.sub) S.ui.sub[{ practice: S.role === "manager" ? "mpractice" : "practice", meets: S.role === "manager" ? "mmeets" : "meets", orders: "morders" }[ds.tab] || ds.tab] = ds.sub; if (S.role === "manager") S.ui.mtab = ds.tab; else S.ui.tab = ds.tab; S.ui.q = ""; render(); window.scrollTo(0, 0); break;
     case "kid": S.ui.aid = ds.id; prefs.set("aid", ds.id); render(); break;
     case "family": openSheet({ type: "family" }); break;
     case "account": openSheet({ type: "account", focus: false }); break;
@@ -1080,10 +1191,10 @@ document.addEventListener("click", async e => {
     case "dirScope": S.ui.dirScope = ds.v; render(); break;
     case "ride": S.ui.ride = ds.v; render(); break;
     case "rosterTeam": S.ui.rosterTeam = ds.v; render(); break;
-    case "orderStatus": S.ui.orderStatus = ds.v; render(); break;
-    case "rosterMode": S.ui.rosterMode = ds.v; render(); break;
-    case "msizes": S.ui.mAid = ds.id; openSheet({ type: "sizes", focus: false }); break;
-    case "morder": S.ui.mAid = ds.id; S.ui.mtab = "orders"; render(); window.scrollTo(0, 0); break;
+    case "sub": S.ui.sub[ds.k] = ds.v; S.ui.q = ""; closeSheet(); render(); scrollToContent(); break;
+    case "shopCat": S.ui.shopCat = ds.v; render(); break;
+    case "msizes": S.ui.mAid = ds.id; S.ui.sub.shop = "sizes"; openSheet({ type: "sizes", focus: false }); break;
+    case "morder": S.ui.mAid = ds.id; S.ui.sub.shop = "store"; S.ui.mtab = "orders"; render(); window.scrollTo(0, 0); break;
     case "pickath": openSheet({ type: "pickath", then: ds.then }); break;
     case "mdone": S.cart = []; S.ui.mAid = null; render(); window.scrollTo(0, 0); break;
     case "copy": copyText(ds.v); break;
@@ -1146,7 +1257,7 @@ document.addEventListener("submit", async e => {
       await act(async () => { const o = await api.insert("orders", { family_id: a.family_id, athlete_id: a.id, payment_plan: plan, note, status: "submitted" });
         for (const c of cart) await api.insert("order_items", { order_id: o.id, item_id: c.item_id, item_name: c.name, choices: c.choices, qty: c.qty });
         S.cart = []; }, "Order sent to the team manager"); break; }
-    case "pickath": S.ui.mAid = g("aid"); closeSheet(); if (form.dataset.then === "sizes") openSheet({ type: "sizes", focus: false }); else { S.ui.mtab = "orders"; render(); window.scrollTo(0, 0); } return;
+    case "pickath": S.ui.mAid = g("aid"); S.ui.sub.shop = "store"; closeSheet(); if (form.dataset.then === "sizes") openSheet({ type: "sizes", focus: false }); else { S.ui.mtab = "orders"; render(); window.scrollTo(0, 0); } return;
     case "pkg": closeSheet(); await act(() => api.update("athletes", { id: a.id }, { meet_package: g("pkg"), meet_plan: g("plan") }), "Meet package saved"); break;
     case "generic": {
       const s = S.sheet, F = FORMS[s.table].fields(), row = {};
