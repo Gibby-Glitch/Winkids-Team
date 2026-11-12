@@ -11,7 +11,7 @@
   --brand:#121212; --brand-hover:#2B2B2B; --on-brand:#FFFFFF; --brand-soft:#EFEFEC; --brand-ink:#121212;
   --accent:#C8F53A; --on-accent:#121212;
   --hero-bg:#121212; --hero-ink:#FFFFFF; --hero-muted:#A8A8A3; --hero-line:rgba(255,255,255,.13); --hero-track:rgba(255,255,255,.16);
-  --tally:#CFCFCA;
+  --tally:#CFCFCA; --l-red:#D93A2F; --l-yellow:#E8A90C; --l-green:#2E9E55;
   --ok:#22703F; --ok-soft:#E3F1E7; --warn:#9A5B0B; --warn-soft:#FBEFDC; --bad:#B0302A; --bad-soft:#F9E4E2;
   --usag:#121212; --usag-soft:#FFFFFF;
   --shadow:0 1px 2px rgba(0,0,0,.05),0 6px 20px rgba(0,0,0,.06);
@@ -24,7 +24,7 @@
   --brand:#F3F3F1; --brand-hover:#FFFFFF; --on-brand:#0B0B0B; --brand-soft:#202020; --brand-ink:#F3F3F1;
   --accent:#C8F53A; --on-accent:#121212;
   --hero-bg:#1B1B1B; --hero-ink:#FFFFFF; --hero-muted:#A3A3A0; --hero-line:rgba(255,255,255,.1); --hero-track:rgba(255,255,255,.14);
-  --tally:#3D3D3D;
+  --tally:#3D3D3D; --l-red:#F0645A; --l-yellow:#F2BE3A; --l-green:#4CC27A;
   --ok:#7CCB98; --ok-soft:#18291E; --warn:#E5AE5C; --warn-soft:#30240F; --bad:#EE8B84; --bad-soft:#371B1A;
   --usag:#F3F3F1; --usag-soft:#161616;
   --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark;
@@ -34,7 +34,7 @@
   --brand:#F3F3F1; --brand-hover:#FFFFFF; --on-brand:#0B0B0B; --brand-soft:#202020; --brand-ink:#F3F3F1;
   --accent:#C8F53A; --on-accent:#121212;
   --hero-bg:#1B1B1B; --hero-ink:#FFFFFF; --hero-muted:#A3A3A0; --hero-line:rgba(255,255,255,.1); --hero-track:rgba(255,255,255,.14);
-  --tally:#3D3D3D;
+  --tally:#3D3D3D; --l-red:#F0645A; --l-yellow:#F2BE3A; --l-green:#4CC27A;
   --ok:#7CCB98; --ok-soft:#18291E; --warn:#E5AE5C; --warn-soft:#30240F; --bad:#EE8B84; --bad-soft:#371B1A;
   --usag:#F3F3F1; --usag-soft:#161616;
   --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark;
@@ -228,6 +228,44 @@ textarea.csv{width:100%;min-height:220px;font-family:ui-monospace,Menlo,monospac
 .famrow summary::-webkit-details-marker{display:none}
 .chev{flex:none;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px}
 .famrow[open] .chev{transform:rotate(-135deg);margin:4px 4px 0}
+/* home board */
+.lights-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.light-tile{display:flex;align-items:center;gap:8px;padding:12px;cursor:pointer;font:inherit;color:inherit;text-align:left}
+.light-tile b{font-family:var(--f-display);font-size:1.4rem}
+.light-tile .small{margin-left:auto}
+@media (max-width:420px){.light-tile{flex-wrap:wrap}.light-tile .small{margin-left:0;width:100%}}
+.light{flex:none;display:inline-block;width:12px;height:12px;border-radius:50%;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
+.light.red{background:var(--l-red);color:var(--l-red)} .light.yellow{background:var(--l-yellow);color:var(--l-yellow)} .light.green{background:var(--l-green);color:var(--l-green)}
+.due-red{color:var(--bad);font-weight:600}
+.tdrow{display:flex;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.list .tdrow:first-child{border-top:0}
+.tick{flex:none;width:22px;height:22px;border-radius:6px;border:2px solid var(--line);background:var(--surface);padding:0}
+.tick:hover{border-color:var(--ink);background:var(--accent)}
+.clegend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.clegend span{display:inline-flex;align-items:center;gap:6px}
+.cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center}
+.cwd{font-size:.7rem;font-weight:700;color:var(--muted);padding:4px 0}
+.cday{border:0;background:none;border-radius:10px;padding:5px 0 4px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:44px;font-variant-numeric:tabular-nums}
+.cday span:first-child{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;font-weight:600;font-size:.88rem}
+.cday:hover{background:var(--surface-2)}
+.cday.out{opacity:.35}
+.cday.today span:first-child{background:var(--accent);color:var(--on-accent);font-weight:800}
+.cday.sel{box-shadow:inset 0 0 0 2px var(--ink)}
+.cdots{display:flex;gap:2px;height:6px}
+.cd{display:inline-block;width:6px;height:6px;border-radius:50%;flex:none}
+.cd.meet{background:var(--ink)} .cd.holiday{background:var(--usag)} .cd.closure{background:var(--tally)}
+.cd.red{background:var(--l-red)} .cd.yellow{background:var(--l-yellow)} .cd.green{background:var(--l-green)}
+.agenda{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.ag{display:flex;gap:10px;align-items:flex-start} .ag .cd{margin-top:7px}
+.convo{display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow-y:auto;padding:4px 0}
+.bub{max-width:88%;border-radius:14px;padding:9px 12px;background:var(--surface-2)}
+.bub.me{align-self:flex-end;background:var(--brand);color:var(--on-brand)}
+.bub.me .bub-meta{color:var(--on-brand);opacity:.7}
+.bub-meta{font-size:.72rem;color:var(--muted);margin-bottom:3px}
+.bub-body{white-space:normal;overflow-wrap:anywhere}
+.reply textarea{min-height:44px}
+.threadrow{width:100%;text-align:left;background:none;border-left:0;border-right:0;border-bottom:0;font:inherit;color:inherit;cursor:pointer}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
 
@@ -393,7 +431,7 @@ function buildDemo() {
   const pick = a => a[Math.floor(rnd() * a.length)];
   const cities = ["Flower Mound","Argyle","Highland Village","Northlake","Lantana","Denton","Double Oak","Copper Canyon","Lewisville"];
   const db = JSON.parse(JSON.stringify(SEASON));
-  Object.assign(db, { families: [], athletes: [], practice_signups: [], meet_rsvps: [], holiday_responses: [], orders: [], order_items: [], team_managers: [{ email: "coach@example.com" }] });
+  Object.assign(db, { families: [], athletes: [], practice_signups: [], meet_rsvps: [], holiday_responses: [], orders: [], order_items: [], messages: [], manager_tasks: [], team_managers: [{ email: "coach@example.com" }] });
   const kids = [
     ["Mia","Rivera","XS1"],["Lucy","Rivera","L2"],["Zoe","Okafor","XGA"],
     ["Nora","Bell","L1"],["Ivy","Chen","L1"],["Lila","Brooks","L1"],["Maya","Ortiz","L1"],["Ruby","Park","L1"],["Stella","Hayes","L1"],
@@ -448,6 +486,21 @@ function buildDemo() {
     db.meets.filter(m => m.levels.includes(a.level)).slice(0, 3).forEach(m => { if (a.first_name === "Lucy") return; if (rnd() > .25) db.meet_rsvps.push({ athlete_id: a.id, meet_id: m.id, status: pick(["yes","yes","yes","maybe","no"]) }); });
     db.holiday_days.forEach(h => { if (a.first_name === "Lucy" || (a.first_name === "Mia" && h.sort > 2)) return; if (rnd() > .3) db.holiday_responses.push({ athlete_id: a.id, day_id: h.id, attending: rnd() > .4 }); });
   });
+  const T0 = todayISO(), ts = h => new Date(Date.now() - h * 36e5).toISOString();
+  db.manager_tasks.push(
+    { id: "t1", title: "Update spring meet fee invoices", notes: null, due_date: addDays(T0, -1), done: false, done_at: null, created_at: ts(200) },
+    { id: "t2", title: "Order competition leotards from Kayla", notes: "Vendor deadline", due_date: addDays(T0, 1), done: false, done_at: null, created_at: ts(150) },
+    { id: "t3", title: "Email Pre-Season meet info to parents", notes: null, due_date: addDays(T0, 4), done: false, done_at: null, created_at: ts(100) },
+    { id: "t4", title: "Confirm coaches for Thanksgiving practice", notes: null, due_date: addDays(T0, 6), done: false, done_at: null, created_at: ts(90) },
+    { id: "t5", title: "Book judges for Round'em Up home meet", notes: null, due_date: addDays(T0, 30), done: false, done_at: null, created_at: ts(80) },
+    { id: "t6", title: "Send T&T clinic forms", notes: null, due_date: addDays(T0, -3), done: true, done_at: ts(30), created_at: ts(300) });
+  const msg = (id, fam, sender, body, h, extra = {}) => db.messages.push({ id, family_id: fam, athlete_id: null, topic: "General", sender, sender_email: sender === "parent" ? db.families.find(f => f.id === fam)?.p1_email : "coach@example.com", body, read_by_manager: sender === "manager", read_by_parent: sender === "parent", created_at: ts(h), ...extra });
+  msg("g1", "fam-chen", "parent", "Is the gym open the Friday after Thanksgiving?", 50, { read_by_manager: true });
+  msg("g2", "fam-chen", "manager", "Yes! Regular Friday practice times that day.", 48, { read_by_parent: true });
+  msg("g3", "fam-okafor", "parent", "Zoe's grips feel tight. Should we order the next size up?", 30, { read_by_manager: true, topic: "Orders & apparel" });
+  msg("g4", "fam-okafor", "manager", "Yes, go up one size. I'll bring the sizing kit Thursday so she can try them.", 26);
+  msg("g5", "fam-rivera", "parent", "Lucy has a dentist appointment next Wednesday. Can she come Thursday instead that week?", 2, { topic: "Absence" });
+  msg("g6", "fam-bell", "parent", "Nora is sick today and will miss practice. Thank you!", 5, { topic: "Absence" });
   db.orders.push({ id: "o1", family_id: "fam-rivera", athlete_id: A("Lucy"), payment_plan: "1/2 & 1/2", status: "submitted", note: null, total: 215, created_at: new Date(Date.now() - 864e5 * 3).toISOString() });
   db.order_items.push({ id: "oi1", order_id: "o1", item_id: "i1", item_name: "Warm-up package", choices: { "Hoodie size": "CS", "Sweatpants size": "CS", "T-shirt size": "CS", "Slides size": "Y1" }, qty: 1, unit_price: 140 },
     { id: "oi2", order_id: "o1", item_id: "i4", item_name: "Gym bag", choices: {}, qty: 1, unit_price: 55 },
@@ -480,7 +533,8 @@ function demoApi() {
     if (["practice_signups","meet_rsvps","holiday_responses"].includes(t)) return owns(r.athlete_id);
     if (t === "orders") return r.family_id === famId();
     if (t === "order_items") return db.orders.some(o => o.id === r.order_id && o.family_id === famId());
-    if (t === "team_managers") return false;
+    if (t === "team_managers" || t === "manager_tasks") return false;
+    if (t === "messages") return r.family_id === famId();
     return famId() != null;
   };
   const clone = x => JSON.parse(JSON.stringify(x));
@@ -504,12 +558,15 @@ function demoApi() {
       if (!isMgr()) {
         if (["practice_signups","meet_rsvps","holiday_responses"].includes(t) && !owns(row.athlete_id)) throw new Error("Not allowed");
         if (t === "orders" && row.family_id !== famId()) throw new Error("Not allowed");
-        if (["families","athletes","teams","practice_options","meets","store_items","meet_packages","holiday_days","settings","team_managers"].includes(t)) throw new Error("Only the team manager can add this.");
+        if (["families","athletes","teams","practice_options","meets","store_items","meet_packages","holiday_days","settings","team_managers","manager_tasks"].includes(t)) throw new Error("Only the team manager can add this.");
+        if (t === "messages" && (row.family_id !== famId() || row.sender !== "parent")) throw new Error("Not allowed");
       }
       if (pkOf(t)[0] === "id" && !row.id) row.id = uid();
       if (t === "practice_signups") { const o = db.practice_options.find(x => x.id === row.option_id);
         row.waitlisted = db.practice_signups.filter(s => s.option_id === row.option_id && !s.waitlisted).length >= o.capacity; row.created_at = new Date().toISOString(); }
       if (t === "orders") { row.status = row.status || "submitted"; row.created_at = new Date().toISOString(); row.total = 0; }
+      if (t === "messages") { row.created_at = new Date().toISOString(); row.sender_email = email; row.read_by_manager = row.sender === "manager"; row.read_by_parent = row.sender === "parent"; }
+      if (t === "manager_tasks") { row.created_at = new Date().toISOString(); row.done = !!row.done; }
       if (t === "order_items") { const o = db.orders.find(x => x.id === row.order_id); const a = db.athletes.find(x => x.id === o.athlete_id); const it = db.store_items.find(x => x.id === row.item_id);
         if (it) { row.item_name = it.name; row.unit_price = it.level_prices?.[a?.level] ?? it.price; }
         db[t].push(row); o.total = db.order_items.filter(x => x.order_id === o.id).reduce((s, x) => s + (x.unit_price || 0) * x.qty, 0); return clone(row); }
@@ -523,8 +580,8 @@ function demoApi() {
     },
     async update(t, m, patch) {
       const r = db[t].find(x => match(x, m)); if (!r || !visible(t, r)) throw new Error("Not found");
-      if (!isMgr() && !["families","athletes","meet_rsvps","holiday_responses"].includes(t)) throw new Error("Only the team manager can change this.");
-      const p = { ...patch }; if (t === "athletes" && !isMgr()) { delete p.team; delete p.level; delete p.family_id; delete p.active; }
+      if (!isMgr() && !["families","athletes","meet_rsvps","holiday_responses","messages"].includes(t)) throw new Error("Only the team manager can change this.");
+      const p = { ...patch }; if (t === "messages" && !isMgr()) { Object.keys(p).forEach(k => { if (k !== "read_by_parent") delete p[k]; }); } if (t === "athletes" && !isMgr()) { delete p.team; delete p.level; delete p.family_id; delete p.active; }
       Object.assign(r, p); return clone(r);
     },
     async remove(t, m) {
@@ -575,6 +632,8 @@ async function load() {
   const T = ["settings","teams","practice_options","meets","meet_packages","holiday_days","store_items","families","athletes","practice_signups","meet_rsvps","holiday_responses","orders","order_items"];
   const res = await Promise.all([...T.map(t => api.list(t)), api.rpc("practice_roster"), api.rpc("team_directory")]);
   const d = {}; T.forEach((t, i) => d[t] = res[i]); d.roster = res[T.length]; d.directory = res[T.length + 1];
+  d.missing = [];
+  for (const t of ["messages", "manager_tasks"]) { try { d[t] = await api.list(t); } catch (e) { d[t] = []; if (me.isManager) d.missing.push(t); } }
   d.set = Object.fromEntries(d.settings.map(s => [s.key, s.value]));
   d.teams.sort(by("sort")); d.practice_options.sort(by("sort")); d.meets.sort(by("start_date")); d.holiday_days.sort(by("sort")); d.store_items.sort(by("sort")); d.meet_packages.sort(by("sort"));
   d.myAthletes = d.athletes.filter(a => a.family_id === me.familyId && a.active !== false).sort(by("first_name"));
@@ -615,14 +674,14 @@ const ICON = {
   meets: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
   shop: '<path d="M6 7h12l-1 13H7z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
   team: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.4 3-5.5 6-5.5s5.4 2.1 6 5.5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.6c2.6-.3 4.8 1.4 5.5 4.4"/>',
-  overview: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  overview: '<path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
   roster: '<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',
   orders: '<path d="M5 4h14v16l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 9h6M9 13h6"/>',
   setup: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'
 };
 const ic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>`;
 const PTABS = [["home","Home"],["practice","Practice"],["meets","Meets"],["shop","Shop"],["team","Team"]];
-const MTABS = [["overview","Overview"],["roster","Roster"],["practice","Practice"],["meets","Meets"],["orders","Orders"],["setup","Setup"]];
+const MTABS = [["overview","Home"],["roster","Roster"],["practice","Practice"],["meets","Meets"],["orders","Orders"],["setup","Setup"]];
 
 function render() {
   const app = $("#app");
@@ -691,11 +750,14 @@ function todoList(a) {
   if (pkgsFor(a.level).length && !a.meet_package) todo.push(["Choose a meet fee package", "meets", "fees"]);
   if (!a.leo_size || !a.sweatshirt_size) todo.push(["Add sizes for apparel orders", "shop", "sizes"]);
   const f = S.d.myFamily; if (f && (!f.p1_phone || !f.p1_email)) todo.push(["Add a phone and email for the directory", "home", "family"]);
+  const um = (S.d.messages || []).filter(m => m.family_id === f?.id && m.sender === "manager" && !m.read_by_parent).length;
+  if (um) todo.unshift([`Read ${um} new message${um > 1 ? "s" : ""} from the team manager`, "home", "messages"]);
   return todo;
 }
 function pHome(a) {
   const t = team(a.team), st = hoursStatus(a), today = todayISO(), todo = todoList(a);
-  const sn = subnav("home", [["week", "This week"], ["todo", "To do", todo.length || "", true], ["family", "Family"]]);
+  const unreadM = S.d.messages.filter(m => m.family_id === S.d.myFamily?.id && m.sender === "manager" && !m.read_by_parent).length;
+  const sn = subnav("home", [["week", "This week"], ["todo", "To do", todo.length || "", true], ["messages", "Messages", unreadM || "", true], ["family", "Family"]]);
   let body = "";
   if (sn.cur === "week") {
     const mine = signupsOf(a.id).map(s => ({ s, o: S.d.practice_options.find(o => o.id === s.option_id) })).filter(x => x.o).sort((x, y) => x.o.sort - y.o.sort);
@@ -712,6 +774,9 @@ function pHome(a) {
   } else if (sn.cur === "todo") {
     body = todo.length ? `<section class="card stack">${todo.map(([txt, go, sub]) => `<div class="todo"><span class="dot"></span><span class="grow">${esc(txt)}</span><button class="btn sm" data-act="tab" data-tab="${go}" data-sub="${sub}">Open</button></div>`).join("")}</section>`
       : `<section class="card row"><span class="pill ok">All caught up</span><span class="muted small">Nothing needs your attention for ${esc(a.first_name)} right now.</span></section>`;
+  } else if (sn.cur === "messages") {
+    body = pMessages(a);
+    if (unreadM) setTimeout(markParentRead, 400);
   } else {
     const f = S.d.myFamily || {};
     body = `<section class="card stack"><div class="row between"><h3>Family info</h3><button class="btn sm primary" data-act="family">Edit</button></div>
@@ -818,39 +883,6 @@ function pTeam(a) {
 }
 
 /* ---------------- MANAGER ---------------- */
-function mOverview() {
-  const d = S.d, act = d.athletes.filter(a => a.active !== false), today = todayISO();
-  const under = act.filter(a => { const t = team(a.team); return t.min_hours != null && hoursOf(a.id) < t.min_hours; });
-  const missing = d.families.filter(f => !f.p1_email || !f.p1_phone);
-  const open = d.orders.filter(o => o.status === "submitted");
-  const waits = d.practice_signups.filter(s => s.waitlisted).length;
-  const next = d.meets.filter(m => m.kind !== "closure" && m.start_date >= today)[0];
-  const hol = d.holiday_days.filter(h => h.day >= today);
-  const sn = subnav("overview", [["summary", "Summary"], ["attention", "To fix", (under.length + missing.length) || "", true], ["spots", "Spots", waits || "", true], ...(hol.length ? [["holiday", "Holidays"]] : [])]);
-  let body = "";
-  if (sn.cur === "summary") {
-    body = `<section class="stat">
-      <button class="card stat-btn" data-act="tab" data-tab="roster"><span class="eyebrow">Athletes</span><b>${act.length}</b><span class="small muted">${d.families.length} families</span></button>
-      <button class="card stat-btn" data-act="sub" data-k="overview" data-v="attention"><span class="eyebrow">Under hours</span><b>${under.length}</b><span class="small muted">below minimum</span></button>
-      <button class="card stat-btn" data-act="sub" data-k="overview" data-v="spots"><span class="eyebrow">Waitlisted</span><b>${waits}</b><span class="small muted">practice spots</span></button>
-      <button class="card stat-btn" data-act="tab" data-tab="orders" data-sub="new"><span class="eyebrow">New orders</span><b>${open.length}</b><span class="small muted">to place</span></button>
-    </section>
-    ${next ? `<section class="card stack"><span class="eyebrow">Next meet</span><h3>${esc(next.name)}</h3><div class="small muted">${dateRange(next.start_date, next.end_date).md} · ${esc(next.location || "")}</div>${rsvpTable(next)}</section>` : ""}`;
-  } else if (sn.cur === "attention") {
-    body = `<section class="card stack"><h3>Below required hours <span class="pill warn">${under.length}</span></h3>${under.length ? `<div class="list">${under.map(a => `<div class="li"><div class="grow">${esc(fullName(a))} <span class="small muted">${esc(team(a.team).name)}</span></div><span class="pill warn tnum">${hoursOf(a.id)} / ${team(a.team).min_hours} hrs</span></div>`).join("")}</div>` : `<div class="muted small">Everyone has enough hours.</div>`}</section>
-      <section class="card stack"><h3>Missing a phone or email <span class="pill bad">${missing.length}</span></h3>${missing.length ? `<div class="list">${missing.map(f => `<div class="li"><div class="grow">${esc(d.athletes.filter(a => a.family_id === f.id).map(fullName).join(", ") || "No athletes")} <div class="small muted">${esc(f.p1_name || "No parent name")}</div></div><button class="btn sm" data-act="form" data-table="families" data-id="${f.id}">Fix</button></div>`).join("")}</div>` : `<div class="muted small">Every family has contact info.</div>`}</section>`;
-  } else if (sn.cur === "spots") {
-    body = `<section class="card stack"><div class="list">${d.practice_options.map(o => { const ro = rosterOf(o.id), f = ro.filter(r => !r.waitlisted).length, w = ro.length - f;
-      return `<div class="li"><div class="grow"><b>${esc(o.label)}</b> <span class="small muted">${esc((o.teams || []).map(c => team(c).name).join(", "))} · ${esc(o.schedule)}</span><div class="meter" style="margin-top:6px"><i style="width:${Math.min(100, f / o.capacity * 100)}%"></i></div></div><span class="tnum small">${f}/${o.capacity}</span>${w ? `<span class="pill warn">${w} waiting</span>` : ""}</div>`; }).join("")}</div></section>`;
-  } else {
-    body = `<section class="card stack"><div class="row between"><h3>Who's coming on holiday days</h3><button class="btn sm" data-act="export" data-what="holiday">Export</button></div>
-      <div class="tablewrap"><table><thead><tr><th>Team</th>${hol.map(h => `<th class="n">${esc(h.label.replace(" Monday", " Mon").replace(" Tuesday", " Tue"))}<br>${fmtDay(h.day).split(", ")[1]}</th>`).join("")}</tr></thead><tbody>
-      ${d.teams.map(t => { const ath = act.filter(a => a.team === t.code); if (!ath.length) return ""; return `<tr><td>${esc(t.name)}</td>${hol.map(h => { const y = ath.filter(a => holOf(a.id, h.id) === true).length, nr = ath.filter(a => holOf(a.id, h.id) == null).length; return `<td class="n"><b>${y}</b> yes${nr ? `<div class="muted small">${nr} no reply</div>` : ""}</td>`; }).join("")}</tr>`; }).join("")}
-      </tbody></table></div></section>`;
-  }
-  return `<div class="stack-lg">${pageHead("Manager", "Team at a glance")}${sn.html}${body}</div>`;
-}
-
 function mRoster() {
   const d = S.d, q = S.ui.q.trim().toLowerCase(); if (S.ui.rosterTeam == null) S.ui.rosterTeam = d.teams[0]?.code || "all"; const tf = q ? "all" : S.ui.rosterTeam;
   const flagsOf = a => { const f = d.families.find(x => x.id === a.family_id) || {}; return [!f.p1_email && "no email", !f.p1_phone && "no phone", !a.leo_size && "no sizes", a.active === false && "inactive"].filter(Boolean); };
@@ -938,6 +970,176 @@ function mSetup() {
     <div class="list">${d.holiday_days.map(h => `<div class="li"><div class="grow"><b>${esc(h.label)}</b> <span class="small muted">${fmtDay(h.day)}</span></div><button class="btn sm" data-act="form" data-table="holiday_days" data-id="${h.id}">Edit</button></div>`).join("")}</div></section>`;
   else body = `<section class="card stack"><div class="list">${d.settings.map(s => `<div class="li"><div class="grow"><b>${esc(s.key.replace(/_/g, " "))}</b><div class="small muted">${esc(s.value)}</div></div><button class="btn sm" data-act="form" data-table="settings" data-id="${esc(s.key)}">Edit</button></div>`).join("")}</div></section>`;
   return `<div class="stack-lg">${pageHead("", "Setup")}${sn.html}${body}</div>`;
+}
+
+/* =====================================================================
+   HOME BOARD: calendar, to-dos with priority lights, parent messages
+   ===================================================================== */
+const ISO = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const addDays = (iso, n) => { const d = D(iso); d.setDate(d.getDate() + n); return ISO(d); };
+const daysUntil = iso => Math.round((D(iso) - D(todayISO())) / 864e5);
+const LIGHT = { red: { label: "Urgent", cls: "red" }, yellow: { label: "This week", cls: "yellow" }, green: { label: "Later", cls: "green" } };
+function lightFor(due) { if (!due) return "green"; const n = daysUntil(due); return n <= 2 ? "red" : n <= 7 ? "yellow" : "green"; }
+function dueText(due) {
+  if (!due) return "No due date"; const n = daysUntil(due);
+  if (n < 0) return `Overdue ${-n} day${n === -1 ? "" : "s"}`; if (n === 0) return "Due today"; if (n === 1) return "Due tomorrow";
+  return `Due ${fmtDay(due)}`;
+}
+function ago(ts) {
+  const s = (Date.now() - new Date(ts)) / 1000;
+  if (s < 60) return "just now"; if (s < 3600) return `${Math.floor(s / 60)}m ago`; if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  if (s < 172800) return "yesterday"; const d = new Date(ts); return `${MON[d.getMonth()]} ${d.getDate()}`;
+}
+const famLabel = fid => { const f = S.d.families.find(x => x.id === fid) || {}; const kids = S.d.athletes.filter(a => a.family_id === fid).map(a => a.first_name);
+  return { kids: kids.length ? kids.join(" & ") + " " + (S.d.athletes.find(a => a.family_id === fid)?.last_name || "") : (f.p1_name || "Family"), parent: f.p1_name || f.p1_email || "" }; };
+const TOPICS = ["General", "Practice", "Meets", "Orders & apparel", "Absence"];
+
+/* ---- threads ---- */
+function threads() {
+  const by = {};
+  S.d.messages.slice().sort((a, b) => a.created_at < b.created_at ? -1 : 1).forEach(m => { (by[m.family_id] = by[m.family_id] || []).push(m); });
+  return Object.entries(by).map(([fid, msgs]) => { const last = msgs[msgs.length - 1];
+    return { fid, msgs, last, needsReply: last.sender === "parent", unread: msgs.filter(m => m.sender === "parent" && !m.read_by_manager).length }; })
+    .sort((a, b) => a.last.created_at < b.last.created_at ? 1 : -1);
+}
+
+/* ---- to-dos: manager tasks + automatic ones ---- */
+function allTodos() {
+  const d = S.d, today = todayISO(), out = [];
+  d.manager_tasks.filter(t => !t.done).forEach(t => out.push({ kind: "task", id: t.id, title: t.title, notes: t.notes, due: t.due_date, light: lightFor(t.due_date) }));
+  const waiting = threads().filter(t => t.needsReply);
+  if (waiting.length) out.push({ kind: "auto", title: `Reply to ${waiting.length} parent message${waiting.length > 1 ? "s" : ""}`, due: today, light: "red", go: ["overview", "messages"] });
+  const newOrders = d.orders.filter(o => o.status === "submitted").length;
+  if (newOrders) { const oldest = d.orders.filter(o => o.status === "submitted").map(o => o.created_at.slice(0, 10)).sort()[0]; const due = addDays(oldest, 7);
+    out.push({ kind: "auto", title: `Place ${newOrders} new order${newOrders > 1 ? "s" : ""} with the vendor`, due, light: lightFor(due), go: ["orders", "new"] }); }
+  d.meets.filter(m => m.kind !== "closure" && m.start_date >= today && daysUntil(m.start_date) <= 21).forEach(m => {
+    const ath = d.athletes.filter(a => a.active !== false && (m.levels || []).includes(a.level)), nr = ath.filter(a => !rsvpOf(a.id, m.id)).length;
+    if (nr) { const due = addDays(m.start_date, -7); out.push({ kind: "auto", title: `${nr} RSVP${nr > 1 ? "s" : ""} missing for ${m.name}`, due, light: lightFor(due), go: ["meets", "upcoming"] }); } });
+  d.holiday_days.filter(h => h.day >= today && daysUntil(h.day) <= 14).forEach(h => {
+    const nr = d.athletes.filter(a => a.active !== false && holOf(a.id, h.id) == null).length;
+    if (nr) { const due = addDays(h.day, -3); out.push({ kind: "auto", title: `${nr} athletes haven't answered ${h.label}`, due, light: lightFor(due), go: ["overview", "stats"] }); } });
+  const order = { red: 0, yellow: 1, green: 2 };
+  return out.sort((a, b) => order[a.light] - order[b.light] || String(a.due || "9999").localeCompare(String(b.due || "9999")));
+}
+function todoRow(t) {
+  const L = LIGHT[t.light];
+  return `<div class="tdrow"><span class="light ${L.cls}" role="img" aria-label="${L.label}"></span>
+    ${t.kind === "task" ? `<button class="tick" data-act="taskdone" data-id="${t.id}" aria-label="Mark done"></button>` : ""}
+    <div class="grow"><b>${esc(t.title)}</b><div class="small ${t.light === "red" ? "due-red" : "muted"}">${dueText(t.due)}${t.notes ? ` · ${esc(t.notes)}` : ""}</div></div>
+    ${t.kind === "task" ? `<button class="btn sm" data-act="form" data-table="manager_tasks" data-id="${t.id}">Edit</button>` : `<button class="btn sm" data-act="tab" data-tab="${t.go[0]}" data-sub="${t.go[1]}">Open</button>`}</div>`;
+}
+
+/* ---- calendar ---- */
+function calEvents() {
+  const d = S.d, ev = {};
+  const add = (iso, e) => (ev[iso] = ev[iso] || []).push(e);
+  d.meets.forEach(m => { let x = m.start_date; const end = m.end_date || m.start_date; while (x <= end) { add(x, { type: m.kind === "closure" ? "closure" : "meet", label: m.name, sub: m.kind === "closure" ? "Gym schedule change" : [m.location, (m.federations || []).join(" · ")].filter(Boolean).join(" · ") }); x = addDays(x, 1); } });
+  d.holiday_days.forEach(h => add(h.day, { type: "holiday", label: h.label, sub: "Holiday practice" }));
+  d.manager_tasks.filter(t => !t.done && t.due_date).forEach(t => add(t.due_date, { type: "task", light: lightFor(t.due_date), label: t.title, sub: "To-do" }));
+  return ev;
+}
+function calendar() {
+  const today = todayISO(); if (!S.ui.cal) { const t = D(today); S.ui.cal = { y: t.getFullYear(), m: t.getMonth(), sel: today }; }
+  const { y, m, sel } = S.ui.cal, first = new Date(y, m, 1), start = new Date(y, m, 1 - first.getDay()), ev = calEvents();
+  let cells = "";
+  for (let i = 0; i < 42; i++) {
+    const dt = new Date(start); dt.setDate(start.getDate() + i); const iso = ISO(dt), out = dt.getMonth() !== m;
+    if (i === 35 && out) break;
+    const es = ev[iso] || [], dots = es.slice(0, 3).map(e => `<i class="cd ${e.type === "task" ? e.light : e.type}"></i>`).join("");
+    cells += `<button class="cday ${out ? "out" : ""} ${iso === today ? "today" : ""} ${iso === sel ? "sel" : ""}" data-act="calsel" data-v="${iso}" aria-label="${fmtDay(iso)}${es.length ? `, ${es.length} item${es.length > 1 ? "s" : ""}` : ""}"><span>${dt.getDate()}</span><span class="cdots">${dots}</span></button>`;
+  }
+  const items = ev[sel] || [];
+  return `<section class="card stack cal">
+    <div class="row between"><h3>${MONTH[m]} ${y}</h3><div class="row" style="gap:4px"><button class="btn sm" data-act="calnav" data-v="-1" aria-label="Previous month">‹</button><button class="btn sm" data-act="caltoday">Today</button><button class="btn sm" data-act="calnav" data-v="1" aria-label="Next month">›</button></div></div>
+    <div class="cgrid">${WD.map(w => `<span class="cwd">${w[0]}</span>`).join("")}${cells}</div>
+    <div class="clegend small muted"><span><i class="cd meet"></i>Meet</span><span><i class="cd holiday"></i>Holiday practice</span><span><i class="cd closure"></i>Break</span><span><i class="cd red"></i>To-do due</span></div>
+    <div class="agenda"><div class="eyebrow">${sel === today ? "Today · " : ""}${fmtDay(sel)}</div>
+      ${items.length ? items.map(e => `<div class="ag"><i class="cd ${e.type === "task" ? e.light : e.type}"></i><div class="grow"><b>${esc(e.label)}</b><div class="small muted">${esc(e.sub || "")}</div></div></div>`).join("") : `<div class="small muted">Nothing scheduled.</div>`}
+      <button class="linkbtn small" data-act="form" data-table="manager_tasks" data-due="${sel}">+ Add a to-do for this day</button></div>
+  </section>`;
+}
+
+/* ---- message pieces ---- */
+const QUICK = ["Got it, thank you!", "Thanks! I'll check and get back to you.", "All set, it's taken care of."], QUICK_LABEL = ["Got it, thanks", "Will check", "All set"];
+function senderName(m) { const f = S.d.families.find(x => x.id === m.family_id) || {}, e = (m.sender_email || "").toLowerCase();
+  return (e && e === (f.p2_email || "").toLowerCase() ? f.p2_name : f.p1_name) || m.sender_email || "Parent"; }
+function bubble(m, mine) {
+  const a = m.athlete_id ? S.d.athletes.find(x => x.id === m.athlete_id) : null;
+  return `<div class="bub ${mine ? "me" : "them"}"><div class="bub-meta">${m.sender === "manager" ? "Team manager" : esc(senderName(m))}${m.topic && m.topic !== "General" ? ` · ${esc(m.topic)}` : ""}${a ? ` · ${esc(a.first_name)}` : ""} · ${ago(m.created_at)}</div><div class="bub-body">${esc(m.body).replace(/\n/g, "<br>")}</div></div>`;
+}
+function replyBox(fid, compact) {
+  return `<form class="stack reply" data-form="mreply" data-fid="${fid}" style="gap:8px">
+    <div class="chips">${QUICK.map((q, i) => `<button type="button" class="chip" data-act="quick" data-fid="${fid}" data-i="${i}">${esc(QUICK_LABEL[i])}</button>`).join("")}</div>
+    <div class="row" style="align-items:flex-end;flex-wrap:nowrap"><div class="field grow"><label for="rp-${fid}" class="sr">Reply</label><textarea id="rp-${fid}" name="body" rows="${compact ? 1 : 2}" placeholder="Write a reply…" required></textarea></div><button class="btn primary" type="submit">Send</button></div></form>`;
+}
+
+/* ---- manager home ---- */
+function mOverview() {
+  const d = S.d, act = d.athletes.filter(a => a.active !== false), today = todayISO();
+  if (S.ui.sub.overview && !["board", "todos", "messages", "stats"].includes(S.ui.sub.overview)) S.ui.sub.overview = "stats";
+  const todos = allTodos(), reds = todos.filter(t => t.light === "red").length, th = threads(), waiting = th.filter(t => t.needsReply);
+  const sn = subnav("overview", [["board", "Board"], ["todos", "To-dos", reds || "", true], ["messages", "Inbox", waiting.length || "", true], ["stats", "Team"]]);
+  const warn = d.missing.length ? `<div class="card small" style="border-color:var(--warn);background:var(--warn-soft)"><b>One more database step.</b> Run <b>update_messages_todos.sql</b> in Supabase SQL Editor to turn on ${d.missing.includes("messages") ? "messages" : ""}${d.missing.length > 1 ? " and " : ""}${d.missing.includes("manager_tasks") ? "to-dos" : ""}.</div>` : "";
+  let body = "";
+  if (sn.cur === "board") {
+    const cnt = k => todos.filter(t => t.light === k).length;
+    body = `<section class="lights-row">${["red", "yellow", "green"].map(k => `<button class="card light-tile" data-act="sub" data-k="overview" data-v="todos"><span class="light ${k}"></span><b class="tnum">${cnt(k)}</b><span class="small muted">${LIGHT[k].label}</span></button>`).join("")}</section>
+      ${calendar()}
+      <section class="card stack"><div class="row between"><h3>Top to-dos</h3><button class="linkbtn" data-act="sub" data-k="overview" data-v="todos">All ${todos.length}</button></div>
+        ${todos.length ? `<div class="list">${todos.slice(0, 4).map(todoRow).join("")}</div>` : `<div class="small muted">Nothing on your list.</div>`}</section>
+      <section class="stack"><div class="section-h"><h2>Messages waiting</h2><button class="linkbtn" data-act="sub" data-k="overview" data-v="messages">All messages</button></div>
+        ${waiting.length ? waiting.slice(0, 3).map(t => { const L = famLabel(t.fid); return `<article class="card stack" style="gap:10px"><div class="row between"><div><b>${esc(L.kids)}</b><div class="small muted">${esc(L.parent)} · ${ago(t.last.created_at)}</div></div>${t.unread ? `<span class="pill warn">New</span>` : ""}</div>
+          ${bubble(t.last, false)}${replyBox(t.fid, true)}<button class="linkbtn small" data-act="thread" data-fid="${t.fid}">Open conversation</button></article>`; }).join("") : `<div class="card row"><span class="pill ok">All answered</span><span class="small muted">No parent messages waiting.</span></div>`}</section>`;
+  } else if (sn.cur === "todos") {
+    const done = d.manager_tasks.filter(t => t.done).sort((a, b) => String(b.done_at).localeCompare(String(a.done_at))).slice(0, 10);
+    body = `<section class="card stack"><div class="row between"><div class="clegend small muted"><span><i class="light red"></i>Due in 2 days or overdue</span><span><i class="light yellow"></i>Due this week</span><span><i class="light green"></i>Later</span></div><button class="btn sm primary" data-act="form" data-table="manager_tasks">Add to-do</button></div>
+      ${todos.length ? `<div class="list">${todos.map(todoRow).join("")}</div>` : `<div class="empty">Nothing on your list.</div>`}</section>
+      ${done.length ? `<details class="card"><summary>Recently done (${done.length})</summary><div class="list" style="margin-top:8px">${done.map(t => `<div class="li"><span class="grow muted" style="text-decoration:line-through">${esc(t.title)}</span><button class="btn sm" data-act="taskundo" data-id="${t.id}">Undo</button></div>`).join("")}</div></details>` : ""}`;
+  } else if (sn.cur === "messages") {
+    const open = S.ui.thread && th.find(t => t.fid === S.ui.thread);
+    if (open) { const L = famLabel(open.fid), f = d.families.find(x => x.id === open.fid) || {};
+      body = `<section class="card stack"><div class="row between"><div><h3>${esc(L.kids)}</h3><div class="small muted">${esc(f.p1_name || "")}${f.p1_phone ? " · " + esc(f.p1_phone) : ""}</div></div><button class="btn sm" data-act="thread" data-fid="">Back</button></div>
+        <div class="convo">${open.msgs.map(m => bubble(m, m.sender === "manager")).join("")}</div>${replyBox(open.fid, false)}</section>`;
+    } else {
+      const f = S.ui.msgFilter || "waiting", list = f === "waiting" ? waiting : th;
+      body = `<div class="chips"><button class="chip" data-act="msgFilter" data-v="waiting" aria-pressed="${f === "waiting"}">Needs reply (${waiting.length})</button><button class="chip" data-act="msgFilter" data-v="all" aria-pressed="${f === "all"}">All conversations (${th.length})</button></div>
+        <section class="card" style="padding:4px 16px">${list.length ? `<div class="list">${list.map(t => { const L = famLabel(t.fid); return `<button class="li threadrow" data-act="thread" data-fid="${t.fid}"><div class="grow"><div class="row between"><b>${esc(L.kids)}</b><span class="small muted">${ago(t.last.created_at)}</span></div><div class="small muted clamp">${t.last.sender === "manager" ? "You: " : ""}${esc(t.last.body)}</div></div>${t.unread ? `<span class="pill warn">${t.unread} new</span>` : t.needsReply ? `<span class="pill line">Reply</span>` : ""}</button>`; }).join("")}</div>` : `<div class="empty">${f === "waiting" ? "No messages waiting for a reply." : "No messages yet."}</div>`}</section>`;
+    }
+  } else {
+    const under = act.filter(a => { const t = team(a.team); return t.min_hours != null && hoursOf(a.id) < t.min_hours; });
+    const missing = d.families.filter(f => !f.p1_email || !f.p1_phone), open = d.orders.filter(o => o.status === "submitted"), waits = d.practice_signups.filter(s => s.waitlisted).length;
+    const next = d.meets.filter(m => m.kind !== "closure" && m.start_date >= today)[0], hol = d.holiday_days.filter(h => h.day >= today);
+    const v = S.ui.statsView || "summary";
+    const tabs = [["summary", "Summary"], ["fix", `To fix (${under.length + missing.length})`], ["spots", "Practice spots"], ...(hol.length ? [["holiday", "Holiday headcount"]] : [])];
+    body = `<div class="chips">${tabs.map(([k, l]) => `<button class="chip" data-act="statsView" data-v="${k}" aria-pressed="${v === k}">${l}</button>`).join("")}</div>`;
+    if (v === "summary") body += `<section class="stat">
+      <button class="card stat-btn" data-act="tab" data-tab="roster"><span class="eyebrow">Athletes</span><b>${act.length}</b><span class="small muted">${d.families.length} families</span></button>
+      <button class="card stat-btn" data-act="statsView" data-v="fix"><span class="eyebrow">Under hours</span><b>${under.length}</b><span class="small muted">below minimum</span></button>
+      <button class="card stat-btn" data-act="statsView" data-v="spots"><span class="eyebrow">Waitlisted</span><b>${waits}</b><span class="small muted">practice spots</span></button>
+      <button class="card stat-btn" data-act="tab" data-tab="orders" data-sub="new"><span class="eyebrow">New orders</span><b>${open.length}</b><span class="small muted">to place</span></button></section>
+      ${next ? `<section class="card stack"><span class="eyebrow">Next meet</span><h3>${esc(next.name)}</h3><div class="small muted">${dateRange(next.start_date, next.end_date).md} · ${esc(next.location || "")}</div>${rsvpTable(next)}</section>` : ""}`;
+    else if (v === "fix") body += `<section class="card stack"><h3>Below required hours <span class="pill warn">${under.length}</span></h3>${under.length ? `<div class="list">${under.map(a => `<div class="li"><div class="grow">${esc(fullName(a))} <span class="small muted">${esc(team(a.team).name)}</span></div><span class="pill warn tnum">${hoursOf(a.id)} / ${team(a.team).min_hours} hrs</span></div>`).join("")}</div>` : `<div class="muted small">Everyone has enough hours.</div>`}</section>
+      <section class="card stack"><h3>Missing a phone or email <span class="pill bad">${missing.length}</span></h3>${missing.length ? `<div class="list">${missing.map(f => `<div class="li"><div class="grow">${esc(d.athletes.filter(a => a.family_id === f.id).map(fullName).join(", ") || "No athletes")} <div class="small muted">${esc(f.p1_name || "No parent name")}</div></div><button class="btn sm" data-act="form" data-table="families" data-id="${f.id}">Fix</button></div>`).join("")}</div>` : `<div class="muted small">Every family has contact info.</div>`}</section>`;
+    else if (v === "spots") body += `<section class="card stack"><div class="list">${d.practice_options.map(o => { const ro = rosterOf(o.id), f = ro.filter(r => !r.waitlisted).length, w = ro.length - f;
+      return `<div class="li"><div class="grow"><b>${esc(o.label)}</b> <span class="small muted">${esc((o.teams || []).map(c => team(c).name).join(", "))} · ${esc(o.schedule)}</span><div class="meter" style="margin-top:6px"><i style="width:${Math.min(100, f / o.capacity * 100)}%"></i></div></div><span class="tnum small">${f}/${o.capacity}</span>${w ? `<span class="pill warn">${w} waiting</span>` : ""}</div>`; }).join("")}</div></section>`;
+    else body += `<section class="card stack"><div class="row between"><h3>Who's coming on holiday days</h3><button class="btn sm" data-act="export" data-what="holiday">Export</button></div>
+      <div class="tablewrap"><table><thead><tr><th>Team</th>${hol.map(h => `<th class="n">${esc(h.label.replace(" Monday", " Mon").replace(" Tuesday", " Tue"))}<br>${fmtDay(h.day).split(", ")[1]}</th>`).join("")}</tr></thead><tbody>
+      ${d.teams.map(t => { const ath = act.filter(a => a.team === t.code); if (!ath.length) return ""; return `<tr><td>${esc(t.name)}</td>${hol.map(h => { const y = ath.filter(a => holOf(a.id, h.id) === true).length, nr = ath.filter(a => holOf(a.id, h.id) == null).length; return `<td class="n"><b>${y}</b> yes${nr ? `<div class="muted small">${nr} no reply</div>` : ""}</td>`; }).join("")}</tr>`; }).join("")}
+      </tbody></table></div></section>`;
+  }
+  const t = D(today), WDF = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  return `<div class="stack-lg">${pageHead(`${WDF[t.getDay()]}, ${MONTH[t.getMonth()]} ${t.getDate()}`, "Home board")}${warn}${sn.html}${body}</div>`;
+}
+
+/* ---- parent messages ---- */
+function pMessages(a) {
+  const f = S.d.myFamily, msgs = S.d.messages.filter(m => m.family_id === f?.id).sort((x, y) => x.created_at < y.created_at ? -1 : 1);
+  return `<section class="card stack"><div><h3>Message the team manager</h3><p class="small muted" style="margin:4px 0 0">For absences, schedule questions, orders, or anything else. You'll see the reply here.</p></div>
+    ${msgs.length ? `<div class="convo">${msgs.map(m => bubble(m, m.sender === "parent")).join("")}</div>` : `<div class="small muted">No messages yet.</div>`}
+    <form class="stack" data-form="pmsg" style="gap:10px">
+      <div class="f2">${sel("pm-topic", "Topic", "General", TOPICS)}${S.d.myAthletes.length > 1 ? sel("pm-ath", "About", a.id, S.d.myAthletes.map(x => [x.id, x.first_name])) : `<input type="hidden" name="pm-ath" value="${a.id}">`}</div>
+      <div class="field"><label for="pm-body">Message</label><textarea id="pm-body" name="body" rows="3" required placeholder="e.g. ${esc(a.first_name)} will miss practice Wednesday for a school event."></textarea></div>
+      <button class="btn primary block" type="submit">Send message</button></form></section>`;
 }
 
 function waitPos(s) { return S.d.roster.filter(r => r.option_id === s.option_id && r.waitlisted).sort(by("created_at")).findIndex(r => r.athlete_id === s.athlete_id) + 1 || 1; }
@@ -1123,11 +1325,12 @@ const FORMS = {
   meets: { title: "Meet", fields: () => [["kind","Type","select",1,[["meet","Meet"],["clinic","Clinic"],["closure","Break / gym closed"]]],["name","Name","text",1],["start_date","Start date","date",1],["end_date","End date","date"],["host","Host"],["location","Location"],["federations","Federation","multi",0,FEDS],["levels","Who's competing","multi",0,lvlOpts.map(([k]) => [k, k])],["note","Note (qualifying rules, etc.)","textarea"]] },
   meet_packages: { title: "Meet fee package", fields: () => [["name","Name","text",1],["levels","Levels","multi",1,lvlOpts.map(([k]) => [k, k])],["meets_count","Number of meets","number"],["full_price","Full price","number"],["half_price","Each half payment","number"],["monthly_price","Each monthly payment","number"],["due_note","Due dates","text"],["sort","Order","number"]] },
   store_items: { title: "Store item", fields: () => [["name","Name","text",1],["description","Description","textarea"],["category","For","select",1,[["athlete","Athlete"],["family","Parents & siblings"]]],["price","Price","number"],["level_prices","Price by level (e.g. L1=142.89, L2=142.89)","kv"],["teams","Only show to these teams (none = everyone)","multi",0,S.d.teams.map(t => [t.code, t.name])],["options","Choices, one per line (e.g. Color: Black, Green · Size: @apparel · Hoodie size: @sweatshirt_size)","textarea"],["required_note","Required note"],["allow_qty","Parents can order more than one","check"],["active","Show in the shop","check"],["sort","Order","number"]] },
+  manager_tasks: { title: "To-do", fields: () => [["title","What needs to get done","text",1],["due_date","Due date","date"],["notes","Notes"],["done","Done","check"]] },
   holiday_days: { title: "Holiday practice day", fields: () => [["label","Label","text",1],["day","Date","date",1],["sort","Order","number"]] },
   settings: { title: "Setting", fields: () => [["value","Value","textarea"]] }
 };
 function shForm(s) {
-  const F = FORMS[s.table], key = pkOf(s.table)[0], row = s.id ? (S.d[s.table].find(r => String(r[key]) === String(s.id)) || {}) : (s.table === "athletes" ? { active: true } : s.table === "families" ? { show_in_directory: true, carpool: "none" } : s.table === "store_items" ? { active: true, allow_qty: true, category: "athlete" } : {});
+  const F = FORMS[s.table], key = pkOf(s.table)[0], row = s.id ? (S.d[s.table].find(r => String(r[key]) === String(s.id)) || {}) : (s.table === "athletes" ? { active: true } : s.table === "families" ? { show_in_directory: true, carpool: "none" } : s.table === "store_items" ? { active: true, allow_qty: true, category: "athlete" } : s.table === "manager_tasks" ? { due_date: s.due || todayISO() } : {});
   const f = F.fields(); const del = `del-${s.table}-${s.id}`;
   const field = ([k, l, t = "text", req, opts]) => {
     const v = row[k], id = "f-" + k, r = req ? "required" : "";
@@ -1148,6 +1351,17 @@ function shForm(s) {
 /* =====================================================================
    EVENTS
    ===================================================================== */
+async function markManagerRead(fid, quiet) {
+  const ids = S.d.messages.filter(m => m.family_id === fid && m.sender === "parent" && !m.read_by_manager).map(m => m.id);
+  if (!ids.length) return; try { for (const id of ids) await api.update("messages", { id }, { read_by_manager: true }); } catch (e) {}
+  if (!quiet) await refresh();
+}
+async function markParentRead() {
+  const ids = (S.d?.messages || []).filter(m => m.family_id === S.d.myFamily?.id && m.sender === "manager" && !m.read_by_parent).map(m => m.id);
+  if (!ids.length) return; try { for (const id of ids) await api.update("messages", { id }, { read_by_parent: true }); } catch (e) {}
+  await refresh();
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && S.d && !S.sheet) refresh(); });
 let toastT;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2600); }
 function arm(key) { if (S.armed === key) { S.armed = null; return true; } S.armed = key; render(); setTimeout(() => { if (S.armed === key) { S.armed = null; render(); } }, 3500); return false; }
@@ -1194,6 +1408,15 @@ document.addEventListener("click", async e => {
     case "rosterTeam": S.ui.rosterTeam = ds.v; render(); break;
     case "sub": S.ui.sub[ds.k] = ds.v; S.ui.q = ""; closeSheet(); render(); scrollToContent(); break;
     case "shopCat": S.ui.shopCat = ds.v; render(); break;
+    case "calsel": S.ui.cal.sel = ds.v; { const dd = D(ds.v); S.ui.cal.y = dd.getFullYear(); S.ui.cal.m = dd.getMonth(); } render(); break;
+    case "calnav": { let m = S.ui.cal.m + Number(ds.v), y = S.ui.cal.y; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } S.ui.cal.m = m; S.ui.cal.y = y; render(); break; }
+    case "caltoday": S.ui.cal = null; render(); break;
+    case "taskdone": await act(() => api.update("manager_tasks", { id: ds.id }, { done: true, done_at: new Date().toISOString() }), "Marked done"); break;
+    case "taskundo": await act(() => api.update("manager_tasks", { id: ds.id }, { done: false, done_at: null }), "Moved back to your list"); break;
+    case "thread": S.ui.thread = ds.fid || null; S.ui.sub.overview = "messages"; render(); window.scrollTo(0, 0); if (ds.fid) markManagerRead(ds.fid); break;
+    case "msgFilter": S.ui.msgFilter = ds.v; render(); break;
+    case "statsView": S.ui.statsView = ds.v; S.ui.sub.overview = "stats"; render(); break;
+    case "quick": { const t = document.getElementById("rp-" + ds.fid); if (t) { t.value = QUICK[+ds.i]; t.focus(); } break; }
     case "msizes": S.ui.mAid = ds.id; S.ui.sub.shop = "sizes"; openSheet({ type: "sizes", focus: false }); break;
     case "morder": S.ui.mAid = ds.id; S.ui.sub.shop = "store"; S.ui.mtab = "orders"; render(); window.scrollTo(0, 0); break;
     case "pickath": openSheet({ type: "pickath", then: ds.then }); break;
@@ -1222,7 +1445,7 @@ document.addEventListener("click", async e => {
     case "export": exportCSV(ds.what); break;
     case "csvcopy": copyText($("#csv-text").value); break;
     case "csvdl": { const b = new Blob([S.sheet.csv], { type: "text/csv" }), u = URL.createObjectURL(b), l = document.createElement("a"); l.href = u; l.download = S.sheet.file; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 2000); break; }
-    case "form": openSheet({ type: "form", table: ds.table, id: ds.id, focus: false }); break;
+    case "form": openSheet({ type: "form", table: ds.table, id: ds.id, due: ds.due, focus: false }); break;
     case "fdel": { const s = S.sheet, key = `del-${s.table}-${s.id}`; if (S.armed !== key) { S.armed = key; renderSheet(); setTimeout(() => { if (S.armed === key) { S.armed = null; renderSheet(); } }, 3500); return; }
       S.armed = null; closeSheet(); await act(() => api.remove(s.table, { [pkOf(s.table)[0]]: s.id }), "Deleted"); break; }
     case "mremove": if (!arm("mr-" + ds.a + ds.o)) return; await act(() => api.remove("practice_signups", { athlete_id: ds.a, option_id: ds.o }), "Removed"); break;
@@ -1259,6 +1482,10 @@ document.addEventListener("submit", async e => {
         for (const c of cart) await api.insert("order_items", { order_id: o.id, item_id: c.item_id, item_name: c.name, choices: c.choices, qty: c.qty });
         S.cart = []; }, "Order sent to the team manager"); break; }
     case "pickath": S.ui.mAid = g("aid"); S.ui.sub.shop = "store"; closeSheet(); if (form.dataset.then === "sizes") openSheet({ type: "sizes", focus: false }); else { S.ui.mtab = "orders"; render(); window.scrollTo(0, 0); } return;
+    case "mreply": { const fid = form.dataset.fid, body = g("body"); if (!body) { if (btn) btn.disabled = false; return; }
+      await act(async () => { await api.insert("messages", { family_id: fid, sender: "manager", body }); await markManagerRead(fid, true); }, "Reply sent"); break; }
+    case "pmsg": { const body = g("body"); if (!body) { if (btn) btn.disabled = false; return; }
+      await act(() => api.insert("messages", { family_id: S.d.myFamily.id, athlete_id: g("pm-ath") || null, topic: g("pm-topic") || "General", sender: "parent", body }), "Message sent to the team manager"); break; }
     case "pkg": closeSheet(); await act(() => api.update("athletes", { id: a.id }, { meet_package: g("pkg"), meet_plan: g("plan") }), "Meet package saved"); break;
     case "generic": {
       const s = S.sheet, F = FORMS[s.table].fields(), row = {};
