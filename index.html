@@ -1,0 +1,1181 @@
+<!doctype html><html lang="en"><head>
+<!-- Win Kids Team app. Put your Supabase URL and anon key in CONFIG below, then commit this file to GitHub; Vercel publishes it. --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><title>Win Kids Team</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: single column app, max 720px, sticky header + fixed bottom tab bar. Team colors: black & white first, neon lime only as a small accent */
+:root{
+  --bg:#F6F6F4; --surface:#FFFFFF; --surface-2:#EFEFEC; --ink:#121212; --muted:#5E5E5A; --line:#E2E2DE;
+  --brand:#121212; --brand-hover:#2B2B2B; --on-brand:#FFFFFF; --brand-soft:#EFEFEC; --brand-ink:#121212;
+  --accent:#C8F53A; --on-accent:#121212;
+  --hero-bg:#121212; --hero-ink:#FFFFFF; --hero-muted:#A8A8A3; --hero-line:rgba(255,255,255,.13); --hero-track:rgba(255,255,255,.16);
+  --tally:#CFCFCA;
+  --ok:#22703F; --ok-soft:#E3F1E7; --warn:#9A5B0B; --warn-soft:#FBEFDC; --bad:#B0302A; --bad-soft:#F9E4E2;
+  --usag:#121212; --usag-soft:#FFFFFF;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 6px 20px rgba(0,0,0,.06);
+  --f-display:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:14px; --r-sm:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B0B0B; --surface:#161616; --surface-2:#202020; --ink:#F3F3F1; --muted:#A3A3A0; --line:#2D2D2D;
+  --brand:#F3F3F1; --brand-hover:#FFFFFF; --on-brand:#0B0B0B; --brand-soft:#202020; --brand-ink:#F3F3F1;
+  --accent:#C8F53A; --on-accent:#121212;
+  --hero-bg:#1B1B1B; --hero-ink:#FFFFFF; --hero-muted:#A3A3A0; --hero-line:rgba(255,255,255,.1); --hero-track:rgba(255,255,255,.14);
+  --tally:#3D3D3D;
+  --ok:#7CCB98; --ok-soft:#18291E; --warn:#E5AE5C; --warn-soft:#30240F; --bad:#EE8B84; --bad-soft:#371B1A;
+  --usag:#F3F3F1; --usag-soft:#161616;
+  --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0B0B0B; --surface:#161616; --surface-2:#202020; --ink:#F3F3F1; --muted:#A3A3A0; --line:#2D2D2D;
+  --brand:#F3F3F1; --brand-hover:#FFFFFF; --on-brand:#0B0B0B; --brand-soft:#202020; --brand-ink:#F3F3F1;
+  --accent:#C8F53A; --on-accent:#121212;
+  --hero-bg:#1B1B1B; --hero-ink:#FFFFFF; --hero-muted:#A3A3A0; --hero-line:rgba(255,255,255,.1); --hero-track:rgba(255,255,255,.14);
+  --tally:#3D3D3D;
+  --ok:#7CCB98; --ok-soft:#18291E; --warn:#E5AE5C; --warn-soft:#30240F; --bad:#EE8B84; --bad-soft:#371B1A;
+  --usag:#F3F3F1; --usag-soft:#161616;
+  --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:-.015em;margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:1.7rem} h2{font-size:1.25rem} h3{font-size:1.02rem;letter-spacing:-.005em}
+.eyebrow{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)} .small{font-size:.85rem} .tnum{font-variant-numeric:tabular-nums}
+.stack{display:flex;flex-direction:column;gap:12px} .stack-lg{display:flex;flex-direction:column;gap:22px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap} .between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:12px;padding-block:10px}
+.mark{width:38px;height:38px;border-radius:10px;background:var(--hero-bg);color:var(--hero-ink);border:1px solid var(--hero-line);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:.95rem;letter-spacing:.02em;flex:none;position:relative}
+.mark::after{content:"";position:absolute;left:9px;right:9px;bottom:7px;height:3px;border-radius:2px;background:var(--accent)}
+.brand b{font-family:var(--f-display);font-size:1.05rem;display:block;line-height:1.2;letter-spacing:-.01em}
+.brand small{color:var(--muted);font-size:.78rem}
+.acct{margin-left:auto;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;width:38px;height:38px;font-size:.8rem;font-weight:700;color:var(--brand-ink)}
+.kids{display:flex;gap:8px;overflow-x:auto;padding-block:0 10px;scrollbar-width:none;align-items:center}
+.kids-label{flex:none;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.kid{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px 5px 5px;display:flex;gap:8px;align-items:center;font-weight:600;font-size:.88rem}
+.kid .av{width:26px;height:26px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-size:.72rem;font-weight:700;color:var(--muted)}
+.kid[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.kid[aria-pressed="true"] .av{background:var(--accent);color:var(--on-accent)}
+.kid[aria-pressed="true"] .muted{color:var(--on-brand);opacity:.7}
+.demo-band{background:var(--surface-2);color:var(--ink);font-size:.82rem;border-bottom:1px solid var(--line)}
+.demo-band .wrap{padding-block:7px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.linkbtn{background:none;border:0;padding:0;color:var(--brand-ink);font-weight:600;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+
+main{padding-block:20px 140px}
+
+/* tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs .wrap{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;padding-block:4px}
+.tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px;font-size:.7rem;font-weight:600;color:var(--muted);border-radius:10px}
+.tab svg{width:21px;height:21px}
+.tab[aria-current="page"]{color:var(--ink)}
+.tab[aria-current="page"] .ic{background:var(--accent);color:var(--on-accent)}
+.tab .ic{display:grid;place-items:center;width:44px;height:28px;border-radius:999px}
+
+/* cards & pieces */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.hero{background:var(--hero-bg);color:var(--hero-ink);border-color:var(--hero-line);padding:20px}
+.hero .muted,.hero .eyebrow{color:var(--hero-muted)}
+.hero .li{border-color:var(--hero-line)}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 9px;font-size:.74rem;font-weight:600;background:var(--surface-2);color:var(--ink);white-space:nowrap}
+.pill.lime{background:var(--accent);color:var(--on-accent)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.line{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 16px;font-weight:600;font-size:.88rem;display:inline-flex;gap:6px;align-items:center;justify-content:center;min-height:40px;transition:background .15s,border-color .15s}
+.btn:hover{border-color:color-mix(in srgb,var(--brand) 40%,var(--line))}
+.btn.primary,.btn.lime{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.btn.primary:hover,.btn.lime:hover{background:var(--brand-hover);border-color:var(--brand-hover)}
+.hero .btn.lime{background:var(--hero-ink);color:var(--hero-bg);border-color:var(--hero-ink)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,var(--line))}
+.btn.armed{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.sm{padding:6px 12px;min-height:34px;font-size:.82rem}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:default}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.83rem;font-weight:600;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.seg{display:inline-flex;align-self:flex-start;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--surface-2)}
+.seg button{border:0;background:none;border-radius:999px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.seg button[aria-pressed="true"].y{background:var(--ok-soft);color:var(--ok)}
+.seg button[aria-pressed="true"].m{background:var(--warn-soft);color:var(--warn)}
+.seg button[aria-pressed="true"].n{background:var(--bad-soft);color:var(--bad)}
+.list{display:flex;flex-direction:column}
+.li{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.li:first-child{border-top:0}
+.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:6px}
+
+/* hours meter */
+.meter{height:8px;border-radius:999px;background:var(--surface-2);position:relative;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--brand);border-radius:999px}
+.hero .meter{background:var(--hero-track)} .hero .meter i{background:var(--accent)}
+
+/* spot tally */
+.tally{display:flex;gap:3px;flex-wrap:wrap}
+.tally span{width:11px;height:15px;border-radius:3px;background:var(--surface-2);border:1px solid var(--line)}
+.tally span.f{background:var(--tally);border-color:var(--tally)}
+.tally span.me{background:var(--accent);border-color:var(--ink)}
+
+/* practice option */
+.opt{display:flex;flex-direction:column;gap:10px}
+.opt.on{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+.opt-h{display:flex;gap:12px;align-items:flex-start}
+.day{flex:none;width:54px;text-align:center;border-radius:10px;background:var(--surface-2);padding:7px 0}
+.day b{font-family:var(--f-display);font-size:1.02rem;display:block;line-height:1.1}
+.day small{font-size:.66rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.on .day{background:var(--accent);color:var(--on-accent)} .on .day small{color:var(--on-accent);opacity:.75}
+details summary{cursor:pointer;color:var(--muted);font-size:.84rem;font-weight:600}
+.names{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+/* meets timeline */
+.month{font-family:var(--f-display);font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px}
+.meet{display:flex;gap:12px}
+.date{flex:none;width:62px;border-radius:12px;background:var(--surface);border:1px solid var(--line);text-align:center;padding:8px 2px;align-self:flex-start;overflow:hidden}
+.date b{font-family:var(--f-display);font-size:1.2rem;display:block;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+.date small{display:block;font-size:.64rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.date small:first-child{color:var(--brand-ink)}
+.meet.closure .date{background:var(--surface-2)}
+.meet.closure .date small:first-child{color:var(--muted)}
+.meet.past{opacity:.55}
+.fed{font-size:.68rem;font-weight:700;letter-spacing:.06em;border-radius:6px;padding:2px 7px;border:1px solid var(--line);color:var(--muted)}
+.fed.TAAF{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.fed.USAG{background:var(--usag-soft);color:var(--usag);border-color:var(--usag)}
+
+/* shop */
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.item{display:flex;flex-direction:column;gap:8px}
+.item .price{font-family:var(--f-display);font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+.sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.size{border-radius:10px;background:var(--surface-2);padding:8px 10px}
+.size small{display:block;color:var(--muted);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.size b{font-family:var(--f-display);font-size:1rem}
+.cartbar{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:19}
+.cartbar .wrap{padding-block:8px}
+.cartbar button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--brand);color:var(--on-brand);border:0;border-radius:12px;padding:13px 18px;font-weight:700;box-shadow:var(--shadow)}
+
+/* directory */
+.fam{display:flex;flex-direction:column;gap:10px}
+.fam-name{font-family:var(--f-display);font-size:1.02rem;font-weight:700}
+.contact{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:.9rem}
+.contact a{color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.copy{border:0;background:var(--surface-2);border-radius:6px;font-size:.72rem;padding:2px 7px;font-weight:600;color:var(--muted)}
+.sel{user-select:all}
+
+/* forms & sheet */
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:.8rem;font-weight:600;color:var(--muted)}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;min-height:44px;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
+.field textarea{min-height:90px;resize:vertical}
+.check{display:flex;gap:10px;align-items:center;font-weight:500}
+.check input{width:20px;height:20px;accent-color:var(--brand)}
+.multi{display:flex;flex-wrap:wrap;gap:6px}
+.multi label{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:.84rem;color:var(--ink)}
+.multi input{accent-color:var(--brand)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:460px){.f2{grid-template-columns:1fr}}
+.sizepick{display:flex;gap:6px}
+.sizepick select{flex:1;min-width:0}
+.scrim{position:fixed;inset:0;background:rgba(12,20,17,.45);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:720px;max-height:92vh;max-height:92dvh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
+@media (min-width:760px){.scrim{align-items:center}.sheet{border-radius:18px;max-height:86vh}}
+.sheet-h{display:flex;align-items:center;gap:10px;padding:14px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);background:var(--surface)}
+.sheet-b{overflow-y:auto;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.x{margin-left:auto;border:0;background:var(--surface-2);width:34px;height:34px;border-radius:50%;font-size:1.1rem;line-height:1;color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--hero-bg);color:var(--hero-ink);padding:10px 16px;border-radius:10px;font-weight:600;font-size:.9rem;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.todo{display:flex;gap:10px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--warn);flex:none}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-sm)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--surface-2)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.stat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:640px){.stat{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.stat .card{padding:12px 14px}
+.stat b{font-family:var(--f-display);font-size:1.6rem;display:block;line-height:1.2;font-variant-numeric:tabular-nums}
+.empty{text-align:center;padding:28px 16px;color:var(--muted)}
+.signin{min-height:100%;display:grid;place-items:center;padding-block:40px}
+textarea.csv{width:100%;min-height:220px;font-family:ui-monospace,Menlo,monospace;font-size:.78rem;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+
+<div id="app"></div>
+<div id="sheet-root"></div>
+<div id="toast" class="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+/* =====================================================================
+   SETUP: paste your Supabase project URL and anon (public) key here.
+   Leave both blank to run the demo with made-up families.
+   ===================================================================== */
+const CONFIG = {
+  SUPABASE_URL: "https://shwlimqshqqlepcketat.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_YDiP09a0K9UwsE-sEnfyxg_1vBbURTh"
+};
+
+/* ---------- small helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = n => n == null || n === "" || isNaN(n) ? "Price TBD" : "$" + Number(n).toFixed(2);
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const by = k => (a, b) => (a[k] ?? 0) > (b[k] ?? 0) ? 1 : (a[k] ?? 0) < (b[k] ?? 0) ? -1 : 0;
+const todayISO = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
+const D = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTH = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function dateRange(a, b) {
+  const s = D(a), e = b ? D(b) : s;
+  if (+s === +e) return { md: `${MON[s.getMonth()]} ${s.getDate()}`, wd: WD[s.getDay()], top: MON[s.getMonth()], big: `${s.getDate()}` };
+  const md = s.getMonth() === e.getMonth() ? `${MON[s.getMonth()]} ${s.getDate()}–${e.getDate()}` : `${MON[s.getMonth()]} ${s.getDate()}–${MON[e.getMonth()]} ${e.getDate()}`;
+  const big = s.getMonth() === e.getMonth() ? `${s.getDate()}–${e.getDate()}` : `${s.getDate()}–${e.getDate()}`;
+  return { md, wd: `${WD[s.getDay()]}–${WD[e.getDay()]}`, top: s.getMonth() === e.getMonth() ? MON[s.getMonth()] : `${MON[s.getMonth()]}–${MON[e.getMonth()]}`, big };
+}
+const fmtDay = s => { const d = D(s); return `${WD[d.getDay()]}, ${MON[d.getMonth()]} ${d.getDate()}`; };
+const initials = s => (s || "?").split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("");
+const fullName = a => [a.first_name, a.last_name].filter(Boolean).join(" ");
+const toCSV = (rows, cols) => [cols.map(c => c[0]).join(","), ...rows.map(r => cols.map(c => {
+  const v = typeof c[1] === "function" ? c[1](r) : r[c[1]]; const s = String(v ?? "");
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; }).join(","))].join("\n");
+
+/* ---------- reference lists ---------- */
+const LEVELS = { L1: "Level 1", L2: "Level 2", XS: "Xcel Silver", XG: "Xcel Gold", XP: "Xcel Platinum", XD: "Xcel Diamond", TT: "Tumbling & Trampoline" };
+const FEDS = ["TAAF", "USAG", "T&T", "Acro"];
+const APPAREL = ["CXS","CS","CM","CL","CXL","AXS","AS","AM","AL","AXL"];
+const ADULT = ["Adult XS","Adult S","Adult M","Adult L","Adult XL","Adult 2XL"];
+const LEO = ["CHILD 4","CHILD 6","CHILD 8","CHILD 10","CHILD 12","CHILD 14","ADULT XS","ADULT S","ADULT M","ADULT L"];
+const SHOE = ["Y10","Y11","Y12","Y13","Y1","Y2","Y3","Y4","Y5","Y6","W5","W6","W6.5","W7","W7.5","W8","W8.5","W9","W10"];
+const GRIP = (() => { const o = []; for (const t of ["V","SB","DB"]) for (const w of ["N","W"]) for (let n = 0; n <= 5; n++) o.push(t + w + n); return o; })();
+const SIZE_FIELDS = {
+  leo_size: { label: "Leotard", list: LEO },
+  snowflake_size: { label: "Snowflake", list: APPAREL },
+  sweatshirt_size: { label: "Hoodie", list: APPAREL },
+  sweatpants_size: { label: "Sweatpants", list: APPAREL },
+  tshirt_size: { label: "T-shirt", list: APPAREL },
+  shoe_size: { label: "Shoe / slides", list: SHOE },
+  grip_size: { label: "Grips", list: GRIP, teams: ["XGA","XGB","XPD"] }
+};
+const STATUS = { submitted: "Submitted", ordered: "Ordered", ready: "Ready for pickup", picked_up: "Picked up", cancelled: "Cancelled" };
+const PLANS = ["Full", "1/2 & 1/2", "Monthly"];
+const CARPOOL = { none: "Not set", offer: "Can give rides", need: "Needs rides", both: "Can give & needs rides" };
+
+function parseOptions(text) {
+  return String(text || "").split("\n").map(l => l.trim()).filter(Boolean).map(l => {
+    const i = l.indexOf(":"); const label = (i < 0 ? l : l.slice(0, i)).trim(); const rest = i < 0 ? "" : l.slice(i + 1).trim();
+    if (rest.startsWith("@")) {
+      const f = rest.slice(1);
+      if (f === "apparel") return { label, choices: APPAREL };
+      if (f === "adult") return { label, choices: ADULT };
+      if (SIZE_FIELDS[f]) return { label, choices: SIZE_FIELDS[f].list, field: f };
+    }
+    return { label, choices: rest.split(",").map(s => s.trim()).filter(Boolean) };
+  });
+}
+
+/* =====================================================================
+   SEASON DATA (demo only — the live app reads these from Supabase)
+   ===================================================================== */
+const SEASON = {
+  settings: [
+    { key: "team_name", value: "Win Kids Team" }, { key: "season", value: "2026–2027" },
+    { key: "payment_note", value: "Tax is added to every order. 1/2 & 1/2 charges run Nov 9 and Jan 9. Monthly charges run Nov 9, then the 1st of Dec through April." },
+    { key: "practice_note", value: "Spots are first come, first served. If a practice is full you can join the waitlist and you move up automatically when a spot opens." }],
+  teams: [
+    { code: "L1", name: "Level 1", level: "L1", signup_mode: "pick", min_hours: 3, max_hours: 3, practice_note: "Level 1 attends 3 hours a week, so pick 2 days. Group 1A is Mon & Wed and Group 1B is Tue & Fri, but you can mix days if that works better for your family. 8 spots per day.", sort: 1 },
+    { code: "L2", name: "Level 2", level: "L2", signup_mode: "pick", min_hours: 4, max_hours: 4, practice_note: "Level 2 attends 4 hours a week, so pick 2 days. Group 2A is Mon & Wed and Group 2B is Tue & Thu, but you can mix days, like Mon & Thu. 7 spots per day.", sort: 2 },
+    { code: "XS1", name: "Xcel Silver 1", level: "XS", signup_mode: "pick", min_hours: 5, max_hours: 10, practice_note: "Xcel Silver attends 5–10 hours per week. Pick the days that work for you. You can also add a BHS 1/2 or TNT class through the front desk.", sort: 3 },
+    { code: "XS2", name: "Xcel Silver 2", level: "XS", signup_mode: "pick", min_hours: 5, max_hours: 10, practice_note: "Xcel Silver attends 5–10 hours per week. Pick the days that work for you. You can also add a BHS 1/2 or TNT class through the front desk.", sort: 4 },
+    { code: "XGA", name: "Xcel Gold A", level: "XG", signup_mode: "pick", min_hours: 6, max_hours: 12, practice_note: "Xcel Gold, Platinum and Diamond attend at least 6 hours per week (up to 12).", sort: 5 },
+    { code: "XGB", name: "Xcel Gold B", level: "XG", signup_mode: "pick", min_hours: 6, max_hours: 12, practice_note: "Xcel Gold, Platinum and Diamond attend at least 6 hours per week (up to 12).", sort: 6 },
+    { code: "XPD", name: "Xcel Platinum/Diamond", level: "XP", signup_mode: "pick", min_hours: 6, max_hours: 12, practice_note: "Xcel Gold, Platinum and Diamond attend at least 6 hours per week (up to 12). Tuesday is the XGC/XP/XD group only.", sort: 7 },
+    { code: "TT", name: "Tumbling & Trampoline", level: "TT", signup_mode: "pick", min_hours: null, max_hours: null, practice_note: "T&T practice times are coming soon.", sort: 8 }],
+  practice_options: [
+    ["l1-mon", ["L1"], "Monday", "Mon 4:30–6:00", 1.5, 8, 1, "Group 1A day"],
+    ["l1-tue", ["L1"], "Tuesday", "Tue 4:30–6:00", 1.5, 8, 2, "Group 1B day"],
+    ["l1-wed", ["L1"], "Wednesday", "Wed 4:00–5:30", 1.5, 8, 3, "Group 1A day"],
+    ["l1-fri", ["L1"], "Friday", "Fri 4:00–5:30", 1.5, 8, 4, "Group 1B day"],
+    ["l2-mon", ["L2"], "Monday", "Mon 4:30–6:30", 2, 7, 5, "Group 2A day"],
+    ["l2-tue", ["L2"], "Tuesday", "Tue 4:30–6:30", 2, 7, 6, "Group 2B day"],
+    ["l2-wed", ["L2"], "Wednesday", "Wed 4:00–6:00", 2, 7, 7, "Group 2A day"],
+    ["l2-thu", ["L2"], "Thursday", "Thu 4:30–6:30", 2, 7, 8, "Group 2B day"],
+    ["xs-mon", ["XS1","XS2"], "Monday", "Mon 4:00–6:30", 2.5, 12, 10],
+    ["xs-tumble", ["XS1","XS2"], "Team Tumbling", "Mon 6:30–7:30", 1, 10, 11],
+    ["xs-tue", ["XS1","XS2"], "Tuesday", "Tue 5:00–7:30", 2.5, 12, 12],
+    ["xs-wed", ["XS1","XS2"], "Wednesday", "Wed 4:30–7:00", 2.5, 12, 13],
+    ["xs-fri", ["XS1","XS2"], "Friday", "Fri 5:00–7:30", 2.5, 12, 14],
+    ["xg-mon", ["XGA","XGB","XPD"], "Monday", "Mon 5:30–8:30", 3, 20, 20],
+    ["xg-tumble", ["XGA","XGB","XPD"], "Team Tumbling", "Mon 6:30–7:30", 1, 10, 21],
+    ["xg-tue", ["XPD"], "Tuesday · XGC/XP/XD", "Tue 4:30–7:30", 3, 12, 22],
+    ["xg-thu", ["XGA","XGB","XPD"], "Thursday", "Thu 4:30–7:30", 3, 20, 23],
+    ["xg-fri", ["XGA","XGB","XPD"], "Friday", "Fri 5:00–7:30", 2.5, 20, 24]
+  ].map(([id, teams, label, schedule, hours, capacity, sort, note]) => ({ id, teams, label, schedule, hours, capacity, sort, note: note || null })),
+  meets: [
+    ["meet","2026-12-05","2026-12-06","Pre-Season Ranking Meet","Classic","North Richland Hills",["TAAF"],["L1","L2","XS","XG","XP","XD"],"Pre-season"],
+    ["clinic","2026-12-05","2026-12-06","T&T State Clinic","NTXTT","Southlake Gymnastics",["T&T"],["TT"],null],
+    ["meet","2027-01-08","2027-01-10","Friends of Achievers (FOA)","Achievers","Denton",["USAG"],["XG","XP","XD"],"Score a 32 AA here or at Texas Tough to qualify for USAG State."],
+    ["meet","2027-01-21","2027-01-24","Dallas Cup","Eagles Wings","Allen",["T&T"],["TT"],null],
+    ["meet","2027-01-23","2027-01-24","Round'em Up Cowgirls","Win Kids","Win Kids (home meet)",["TAAF"],["L1","L2","XS","XG","XP","XD"],"TAAF Qualifier"],
+    ["meet","2027-02-06","2027-02-07","Heart & Soul","RGA","Richardson",["TAAF"],["L1","L2","XS","XG","XP","XD"],"TAAF Qualifier"],
+    ["meet","2027-02-20","2027-02-21","Texas Tough T&T","The Rock","Arlington",["T&T"],["TT"],null],
+    ["meet","2027-02-27","2027-02-28","Irving Gymnastics","Irving","Irving",["TAAF"],["L1","L2","XS","XG","XP","XD"],"TAAF Qualifier"],
+    ["meet","2027-03-06","2027-03-07","Texas Tough","The Rock","Arlington",["TAAF","USAG"],["L1","L2","XS","XG","XP","XD"],"USAG Gold/Platinum/Diamond: score a 32 AA here or at FOA to qualify for USAG State."],
+    ["closure","2027-03-08","2027-03-12","Denton & Argyle Spring Break",null,null,[],[],null],
+    ["closure","2027-03-15","2027-03-19","LISD Spring Break",null,null,[],[],null],
+    ["closure","2027-03-26","2027-03-28","Easter · Gym closed",null,null,[],[],null],
+    ["meet","2027-04-02","2027-04-04","USAG Gold North State","Rock Solid","Lubbock",["USAG"],["XG"],"Must score a 32 AA at FOA or Texas Tough to qualify."],
+    ["meet","2027-04-09","2027-04-11","USAG XP & XD State","WCC","Spring",["USAG"],["XP","XD"],"Must score a 32 AA at FOA or Texas Tough to qualify."],
+    ["meet","2027-04-17","2027-04-18","Level 1 & 2 TAAF State","Velocity","Brenham",["TAAF"],["L1","L2"],"Compete in 3 TAAF Qualifiers to qualify."],
+    ["meet","2027-04-23","2027-04-25","USAG Xcel Gold Regionals","JAG","Andover, Kansas",["USAG"],["XG"],"Qualify at USAG State with a 35+ all-around."],
+    ["meet","2027-04-24","2027-04-25","Xcel Silver TAAF State","Trevino's","Lancaster",["TAAF"],["XS"],"Compete in 3 TAAF Qualifiers to qualify."],
+    ["meet","2027-05-01","2027-05-02","XG, XP & XD TAAF State","Gym Tricks","Whitney",["TAAF"],["XG","XP","XD"],"Compete in 3 TAAF Qualifiers to qualify."],
+    ["meet","2027-05-07","2027-05-09","USAG XP/XD Regionals","River City","San Antonio",["USAG"],["XP","XD"],"Qualify at USAG State with a 34+ all-around."],
+    ["meet","2027-06-10","2027-06-13","National Xcelebration","USA Gymnastics","Minneapolis, Minnesota",["USAG"],["XP","XD"],"Top 100 at Regionals qualify."]
+  ].map(([kind, start_date, end_date, name, host, location, federations, levels, note], i) => ({ id: "m" + (i + 1), kind, start_date, end_date, name, host, location, federations, levels, note })),
+  meet_packages: [
+    [["L1","L2"],"TAAF only",6,425,212.5,70.83,1],[["XS"],"TAAF only",6,465,232.5,77.5,2],[["XG","XP","XD"],"TAAF only",6,465,232.5,77.5,3],
+    [["XG"],"USAG only (Pre-season, USAG & home meet)",5,590,295,98.33,4],[["XP","XD"],"USAG only (Pre-season, USAG & home meet)",5,600,300,100,5],
+    [["XG","XP","XD"],"TAAF & USAG (all meets)",8,730,365,121.67,6]
+  ].map(([levels, name, meets_count, full_price, half_price, monthly_price, sort], i) => ({ id: "pk" + (i + 1), levels, name, meets_count, full_price, half_price, monthly_price, sort, due_note: "Full: 11/1/26 · Half: 11/1/26 & 1/2/27 · Monthly: 6 payments Nov–Apr" })),
+  holiday_days: [
+    { id: "h1", label: "Thanksgiving Monday", day: "2026-11-23", sort: 1 }, { id: "h2", label: "Thanksgiving Tuesday", day: "2026-11-24", sort: 2 },
+    { id: "h3", label: "Christmas Monday", day: "2026-12-21", sort: 3 }, { id: "h4", label: "Christmas Tuesday", day: "2026-12-22", sort: 4 }],
+  store_items: [
+    { id: "i1", name: "Warm-up package", description: "Team t-shirt, hoodie, sweatpants and custom slides.", category: "athlete", price: 140, level_prices: {}, teams: [], options: "Hoodie size: @sweatshirt_size\nSweatpants size: @sweatpants_size\nT-shirt size: @tshirt_size\nSlides size: @shoe_size", required_note: null, allow_qty: false, active: true, sort: 1 },
+    { id: "i2", name: "Competition leotard · Kayla", description: "2026–2028 competition leotard. Half & half payments are due 7/10 and 9/1.", category: "athlete", price: 340.98, level_prices: { L1: 142.89, L2: 142.89 }, teams: [], options: "Leotard size: @leo_size", required_note: null, allow_qty: false, active: true, sort: 2 },
+    { id: "i3", name: "Briefs", description: "Black or nude.", category: "athlete", price: 20, level_prices: {}, teams: [], options: "Color: Black, Nude", required_note: "Required for new athletes, or if outgrown or lost", allow_qty: true, active: true, sort: 3 },
+    { id: "i4", name: "Gym bag", description: null, category: "athlete", price: 55, level_prices: {}, teams: [], options: null, required_note: "Required for new team members", allow_qty: false, active: true, sort: 4 },
+    { id: "i5", name: "Extra scrunchies", description: null, category: "athlete", price: 6, level_prices: {}, teams: [], options: "Color: Black, Green", required_note: null, allow_qty: true, active: true, sort: 5 },
+    { id: "i6", name: "High-performance sports bra", description: null, category: "athlete", price: 31.99, level_prices: {}, teams: [], options: "Size: @apparel", required_note: null, allow_qty: true, active: true, sort: 6 },
+    { id: "i7", name: "Grips · complete package", description: "Grips, wristbands, grip bag and tape.", category: "athlete", price: null, level_prices: {}, teams: ["XGA","XGB","XPD"], options: "Grip size: @grip_size\nWristbands: Green, Black, Gray\nGrip bag: Solid, Striped", required_note: null, allow_qty: false, active: true, sort: 7 },
+    { id: "i8", name: "Grips · reorder package", description: "Grips, wristbands and tape.", category: "athlete", price: null, level_prices: {}, teams: ["XGA","XGB","XPD"], options: "Grip size: @grip_size\nWristbands: Green, Black, Gray", required_note: null, allow_qty: false, active: true, sort: 8 },
+    { id: "i9", name: "Rip guards", description: null, category: "athlete", price: null, level_prices: {}, teams: ["XGA","XGB","XPD"], options: null, required_note: null, allow_qty: true, active: true, sort: 9 },
+    { id: "i10", name: "Parent/sibling team T-shirt", description: null, category: "family", price: 25, level_prices: {}, teams: [], options: "Size: @adult", required_note: null, allow_qty: true, active: true, sort: 10 },
+    { id: "i11", name: "Parent/sibling team sweatshirt", description: null, category: "family", price: 45, level_prices: {}, teams: [], options: "Style: Crewneck, Hoodie\nSize: @adult", required_note: null, allow_qty: true, active: true, sort: 11 }]
+};
+
+/* ---------- demo families (all made up) ---------- */
+function buildDemo() {
+  let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const pick = a => a[Math.floor(rnd() * a.length)];
+  const cities = ["Flower Mound","Argyle","Highland Village","Northlake","Lantana","Denton","Double Oak","Copper Canyon","Lewisville"];
+  const db = JSON.parse(JSON.stringify(SEASON));
+  Object.assign(db, { families: [], athletes: [], practice_signups: [], meet_rsvps: [], holiday_responses: [], orders: [], order_items: [], team_managers: [{ email: "coach@example.com" }] });
+  const kids = [
+    ["Mia","Rivera","XS1"],["Lucy","Rivera","L2"],["Zoe","Okafor","XGA"],
+    ["Nora","Bell","L1"],["Ivy","Chen","L1"],["Lila","Brooks","L1"],["Maya","Ortiz","L1"],["Ruby","Park","L1"],["Stella","Hayes","L1"],
+    ["Ada","Nguyen","L2"],["June","Foster","L2"],["Clara","Webb","L2"],["Willa","Grant","L2"],["Iris","Moreno","L2"],
+    ["Quinn","Avery","XS1"],["Sloane","Reed","XS1"],["Tessa","Lin","XS1"],["Gemma","Diaz","XS1"],["Rosie","Clark","XS1"],["Wren","Ellis","XS1"],["Nina","Sato","XS1"],["Faye","Holt","XS1"],["Josie","Kerr","XS1"],["Leah","Moss","XS1"],["Bria","Cole","XS1"],
+    ["Kate","Lowe","XS2"],["Elise","Ward","XS2"],["Mae","Fischer","XS2"],["Tori","Banks","XS2"],["Lena","Voss","XS2"],["Cora","Hale","XS2"],
+    ["Ana","Silva","XGA"],["Bree","Watts","XGA"],["Dani","Ruiz","XGA"],["Remi","Fox","XGA"],
+    ["Kira","Lund","XGB"],["Olive","Snow","XGB"],["Paige","Hart","XGB"],
+    ["Sasha","Volkov","XPD"],["Talia","Ross","XPD"],["Vera","Quinn","XPD"],["Yara","Haddad","XPD"],
+    ["Max","Duran","TT"],["Ella","Pruitt","TT"]];
+  const p1 = ["Dana","Grace","Erin","Holly","Jenna","Kim","Laura","Megan","Nicole","Paula","Rachel","Sara","Tina","Valerie","Amy","Beth","Carly","Diane","Emily","Fiona"];
+  const p2 = ["Marco","Chris","Dev","Eli","Frank","Greg","Hank","Ian","Jon","Kyle","Luke","Matt","Nate","Owen","Pete"];
+  const teamLevel = { L1: "L1", L2: "L2", XS1: "XS", XS2: "XS", XGA: "XG", XGB: "XG", XPD: "XP", TT: "TT" };
+  let ph = 100;
+  const fams = {};
+  kids.forEach(([first, last, team], i) => {
+    const fid = "fam-" + last.toLowerCase();
+    if (!fams[fid]) {
+      const a = last === "Rivera" ? "Dana" : last === "Okafor" ? "Grace" : pick(p1);
+      const b = rnd() > .45 ? (last === "Rivera" ? "Marco" : pick(p2)) : null;
+      const cp = last === "Rivera" ? "need" : pick(["none","none","offer","need","offer","both"]);
+      fams[fid] = { id: fid, p1_name: `${a} ${last}`, p1_email: `${a}.${last}@example.com`.toLowerCase(), p1_phone: `214-555-0${ph++}`,
+        p2_name: b ? `${b} ${last}` : null, p2_email: b ? `${b}.${last}@example.com`.toLowerCase() : null, p2_phone: b ? `214-555-0${ph++}` : null,
+        city: last === "Rivera" ? "Flower Mound" : pick(cities), show_in_directory: rnd() > .1 || last === "Rivera", carpool: cp,
+        carpool_note: cp === "need" ? (last === "Rivera" ? "Need a ride home Tuesdays and Thursdays" : "Weekday pickups") : cp === "offer" ? "Can drive " + pick(["Mondays","Wednesdays","Fridays","most days"]) : null };
+      db.families.push(fams[fid]);
+    }
+    const L = teamLevel[team];
+    const leo = { L1: "CHILD 6", L2: "CHILD 6", XS: pick(["CHILD 8","CHILD 10"]), XG: pick(["CHILD 12","ADULT XS"]), XP: pick(["ADULT XS","ADULT S"]), TT: "CHILD 10" }[L];
+    const ap = { L1: "CS", L2: "CS", XS: pick(["CM","CL"]), XG: pick(["CL","AS"]), XP: pick(["AS","AM"]), TT: "CL" }[L];
+    db.athletes.push({ id: "a" + (i + 1), family_id: fid, first_name: first, last_name: last, team, level: L,
+      birthdate: null, school_grade: null, chest: null, waist: null, hips: null, torso: null,
+      leo_size: last === "Rivera" && first === "Lucy" ? null : leo, snowflake_size: ap, sweatshirt_size: ap, sweatpants_size: ap, tshirt_size: ap,
+      shoe_size: pick(["Y1","Y2","Y3","Y13","W6"]), grip_size: ["XGA","XGB","XPD"].includes(team) ? pick(["VN2","VN3","SBN4","DBW4"]) : null,
+      meet_package: first === "Mia" ? "pk2" : null, meet_plan: first === "Mia" ? "Full" : null, active: true });
+  });
+  let t = Date.now() - 864e5 * 30;
+  const add = (aid, oid) => { const o = db.practice_options.find(x => x.id === oid);
+    const taken = db.practice_signups.filter(s => s.option_id === oid && !s.waitlisted).length;
+    db.practice_signups.push({ athlete_id: aid, option_id: oid, waitlisted: taken >= o.capacity, created_at: new Date(t += 36e5).toISOString() }); };
+  const A = n => db.athletes.find(a => a.first_name === n).id;
+  add(A("Mia"), "xs-mon"); add(A("Mia"), "xs-wed"); add(A("Lucy"), "l2-mon"); add(A("Lucy"), "l2-wed");
+  ["Zoe"].forEach(n => { add(A(n), "xg-mon"); add(A(n), "xg-thu"); });
+  db.athletes.forEach(a => {
+    if (["Mia","Lucy","Zoe"].includes(a.first_name)) return;
+    if (a.team === "L1") { const r = rnd(); if (r > .4) { add(a.id, "l1-mon"); add(a.id, "l1-wed"); } else if (r > .15) { add(a.id, "l1-tue"); add(a.id, "l1-fri"); } else { add(a.id, "l1-mon"); add(a.id, "l1-fri"); } }
+    if (a.team === "L2") { const r = rnd(); if (r > .5) { add(a.id, "l2-mon"); add(a.id, "l2-wed"); } else if (r > .2) { add(a.id, "l2-tue"); add(a.id, "l2-thu"); } else { add(a.id, "l2-mon"); add(a.id, "l2-thu"); } }
+    if (a.team === "XS1" || a.team === "XS2") { if (rnd() > .25) add(a.id, "xs-tue"); add(a.id, pick(["xs-mon","xs-wed","xs-fri"])); if (rnd() > .6) add(a.id, "xs-tumble"); }
+    if (["XGA","XGB","XPD"].includes(a.team)) { add(a.id, "xg-mon"); add(a.id, "xg-thu"); if (a.team === "XPD") add(a.id, "xg-tue"); else if (rnd() > .5) add(a.id, "xg-fri"); }
+  });
+  db.athletes.forEach(a => {
+    db.meets.filter(m => m.levels.includes(a.level)).slice(0, 3).forEach(m => { if (a.first_name === "Lucy") return; if (rnd() > .25) db.meet_rsvps.push({ athlete_id: a.id, meet_id: m.id, status: pick(["yes","yes","yes","maybe","no"]) }); });
+    db.holiday_days.forEach(h => { if (a.first_name === "Lucy" || (a.first_name === "Mia" && h.sort > 2)) return; if (rnd() > .3) db.holiday_responses.push({ athlete_id: a.id, day_id: h.id, attending: rnd() > .4 }); });
+  });
+  db.orders.push({ id: "o1", family_id: "fam-rivera", athlete_id: A("Lucy"), payment_plan: "1/2 & 1/2", status: "submitted", note: null, total: 215, created_at: new Date(Date.now() - 864e5 * 3).toISOString() });
+  db.order_items.push({ id: "oi1", order_id: "o1", item_id: "i1", item_name: "Warm-up package", choices: { "Hoodie size": "CS", "Sweatpants size": "CS", "T-shirt size": "CS", "Slides size": "Y1" }, qty: 1, unit_price: 140 },
+    { id: "oi2", order_id: "o1", item_id: "i4", item_name: "Gym bag", choices: {}, qty: 1, unit_price: 55 },
+    { id: "oi3", order_id: "o1", item_id: "i3", item_name: "Briefs", choices: { Color: "Black" }, qty: 1, unit_price: 20 });
+  db.orders.push({ id: "o2", family_id: "fam-okafor", athlete_id: A("Zoe"), payment_plan: "Full", status: "ordered", note: null, total: 140, created_at: new Date(Date.now() - 864e5 * 9).toISOString() });
+  db.order_items.push({ id: "oi4", order_id: "o2", item_id: "i1", item_name: "Warm-up package", choices: { "Hoodie size": "AS", "Sweatpants size": "CL", "T-shirt size": "AS", "Slides size": "W6" }, qty: 1, unit_price: 140 });
+  return db;
+}
+
+const PERSONAS = [
+  { key: "rivera", label: "Dana Rivera", sub: "Parent of Mia (Xcel Silver 1) and Lucy (Level 2)", email: "dana.rivera@example.com" },
+  { key: "okafor", label: "Grace Okafor", sub: "Parent of Zoe (Xcel Gold A)", email: "grace.okafor@example.com" },
+  { key: "manager", label: "Team manager", sub: "Sees every family, runs exports", email: "coach@example.com" }];
+
+/* =====================================================================
+   DATA LAYER — demo (in memory) and live (Supabase), same shape
+   ===================================================================== */
+const PK = { teams: ["code"], settings: ["key"], team_managers: ["email"], practice_signups: ["athlete_id","option_id"], meet_rsvps: ["athlete_id","meet_id"], holiday_responses: ["athlete_id","day_id"] };
+const pkOf = t => PK[t] || ["id"];
+
+function demoApi() {
+  const db = buildDemo(); let email = PERSONAS[0].email;
+  const isMgr = () => db.team_managers.some(m => m.email === email);
+  const famId = () => (db.families.find(f => f.p1_email === email || f.p2_email === email) || {}).id || null;
+  const owns = aid => db.athletes.some(a => a.id === aid && a.family_id === famId());
+  const visible = (t, r) => {
+    if (isMgr()) return true;
+    if (["families"].includes(t)) return r.id === famId();
+    if (t === "athletes") return r.family_id === famId();
+    if (["practice_signups","meet_rsvps","holiday_responses"].includes(t)) return owns(r.athlete_id);
+    if (t === "orders") return r.family_id === famId();
+    if (t === "order_items") return db.orders.some(o => o.id === r.order_id && o.family_id === famId());
+    if (t === "team_managers") return false;
+    return famId() != null;
+  };
+  const clone = x => JSON.parse(JSON.stringify(x));
+  const match = (r, m) => Object.keys(m).every(k => r[k] === m[k]);
+  return {
+    demo: true,
+    persona: () => PERSONAS.find(p => p.email === email),
+    setPersona(key) { email = PERSONAS.find(p => p.key === key).email; },
+    async whoami() { return { email, isManager: isMgr(), familyId: famId() }; },
+    async list(t) { return clone(db[t].filter(r => visible(t, r))); },
+    async rpc(name) {
+      if (!isMgr() && !famId()) return [];
+      if (name === "practice_roster") return db.practice_signups.slice().sort(by("created_at")).map(s => { const a = db.athletes.find(x => x.id === s.athlete_id);
+        return { option_id: s.option_id, athlete_id: s.athlete_id, display_name: `${a.first_name} ${a.last_name ? a.last_name[0] + "." : ""}`, team: a.team, waitlisted: s.waitlisted, created_at: s.created_at }; });
+      if (name === "team_directory") return db.families.filter(f => f.show_in_directory).map(f => ({ family_id: f.id, ...f,
+        athletes: db.athletes.filter(a => a.family_id === f.id && a.active).map(a => ({ first_name: a.first_name, last_name: a.last_name, team: a.team, level: a.level })) }));
+      return [];
+    },
+    async insert(t, row) {
+      row = clone(row);
+      if (!isMgr()) {
+        if (["practice_signups","meet_rsvps","holiday_responses"].includes(t) && !owns(row.athlete_id)) throw new Error("Not allowed");
+        if (t === "orders" && row.family_id !== famId()) throw new Error("Not allowed");
+        if (["families","athletes","teams","practice_options","meets","store_items","meet_packages","holiday_days","settings","team_managers"].includes(t)) throw new Error("Only the team manager can add this.");
+      }
+      if (pkOf(t)[0] === "id" && !row.id) row.id = uid();
+      if (t === "practice_signups") { const o = db.practice_options.find(x => x.id === row.option_id);
+        row.waitlisted = db.practice_signups.filter(s => s.option_id === row.option_id && !s.waitlisted).length >= o.capacity; row.created_at = new Date().toISOString(); }
+      if (t === "orders") { row.status = row.status || "submitted"; row.created_at = new Date().toISOString(); row.total = 0; }
+      if (t === "order_items") { const o = db.orders.find(x => x.id === row.order_id); const a = db.athletes.find(x => x.id === o.athlete_id); const it = db.store_items.find(x => x.id === row.item_id);
+        if (it) { row.item_name = it.name; row.unit_price = it.level_prices?.[a?.level] ?? it.price; }
+        db[t].push(row); o.total = db.order_items.filter(x => x.order_id === o.id).reduce((s, x) => s + (x.unit_price || 0) * x.qty, 0); return clone(row); }
+      if (db[t].some(r => pkOf(t).every(k => r[k] === row[k]))) throw new Error("Already exists");
+      db[t].push(row); return clone(row);
+    },
+    async upsert(t, row) {
+      const ex = db[t].find(r => pkOf(t).every(k => r[k] === row[k]));
+      if (ex) return this.update(t, Object.fromEntries(pkOf(t).map(k => [k, row[k]])), row);
+      return this.insert(t, row);
+    },
+    async update(t, m, patch) {
+      const r = db[t].find(x => match(x, m)); if (!r || !visible(t, r)) throw new Error("Not found");
+      if (!isMgr() && !["families","athletes","meet_rsvps","holiday_responses"].includes(t)) throw new Error("Only the team manager can change this.");
+      const p = { ...patch }; if (t === "athletes" && !isMgr()) { delete p.team; delete p.level; delete p.family_id; delete p.active; }
+      Object.assign(r, p); return clone(r);
+    },
+    async remove(t, m) {
+      const rows = db[t].filter(x => match(x, m) && visible(t, x));
+      if (!isMgr() && !["practice_signups","meet_rsvps","holiday_responses"].includes(t)) throw new Error("Only the team manager can remove this.");
+      rows.forEach(r => {
+        db[t].splice(db[t].indexOf(r), 1);
+        if (t === "practice_signups" && !r.waitlisted) { const nx = db.practice_signups.filter(s => s.option_id === r.option_id && s.waitlisted).sort(by("created_at"))[0]; if (nx) nx.waitlisted = false; }
+      });
+    },
+    async signOut() {}
+  };
+}
+
+function liveApi() {
+  const sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+  const chk = ({ data, error }) => { if (error) throw new Error(error.message); return data; };
+  return {
+    demo: false, sb,
+    async session() { return (await sb.auth.getSession()).data.session; },
+    async signIn(email) { chk(await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } })); },
+    async signOut() { await sb.auth.signOut(); },
+    async whoami() { const s = await this.session(); if (!s) return null; const r = chk(await sb.rpc("whoami"))[0] || {};
+      return { email: s.user.email, isManager: !!r.is_manager, familyId: r.family_id || null }; },
+    async list(t) { return chk(await sb.from(t).select("*")); },
+    async rpc(n) { return chk(await sb.rpc(n)); },
+    async insert(t, row) { const d = chk(await sb.from(t).insert(row).select()); return d[0]; },
+    async upsert(t, row) { const d = chk(await sb.from(t).upsert(row, { onConflict: pkOf(t).join(",") }).select()); return d[0]; },
+    async update(t, m, patch) { const d = chk(await sb.from(t).update(patch).match(m).select()); return d[0]; },
+    async remove(t, m) { chk(await sb.from(t).delete().match(m)); }
+  };
+}
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const LIVE = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY);
+let api;
+const S = { me: null, role: "parent", d: null, ui: { tab: "home", mtab: "overview", aid: null, meetScope: "mine", fed: "all", dirScope: "mine", ride: "all", q: "", rosterTeam: "all", rosterMode: "contacts", mAid: null, orderStatus: "open" }, sheet: null, carts: {}, armed: null, loading: true, error: null };
+Object.defineProperty(S, "cart", { get() { const k = (S.d && curA()?.id) || "_"; return S.carts[k] || (S.carts[k] = []); }, set(v) { const k = (S.d && curA()?.id) || "_"; S.carts[k] = v; } });
+const prefs = { get(k) { try { return localStorage.getItem("wk." + k); } catch { return null; } }, set(k, v) { try { localStorage.setItem("wk." + k, v); } catch {} } };
+
+async function load() {
+  const me = await api.whoami(); S.me = me;
+  if (!me || (!me.isManager && !me.familyId)) { S.d = null; return; }
+  if (!me.isManager) S.role = "parent"; else if (!me.familyId) S.role = "manager";
+  const T = ["settings","teams","practice_options","meets","meet_packages","holiday_days","store_items","families","athletes","practice_signups","meet_rsvps","holiday_responses","orders","order_items"];
+  const res = await Promise.all([...T.map(t => api.list(t)), api.rpc("practice_roster"), api.rpc("team_directory")]);
+  const d = {}; T.forEach((t, i) => d[t] = res[i]); d.roster = res[T.length]; d.directory = res[T.length + 1];
+  d.set = Object.fromEntries(d.settings.map(s => [s.key, s.value]));
+  d.teams.sort(by("sort")); d.practice_options.sort(by("sort")); d.meets.sort(by("start_date")); d.holiday_days.sort(by("sort")); d.store_items.sort(by("sort")); d.meet_packages.sort(by("sort"));
+  d.myAthletes = d.athletes.filter(a => a.family_id === me.familyId && a.active !== false).sort(by("first_name"));
+  d.myFamily = d.families.find(f => f.id === me.familyId) || null;
+  S.d = d;
+  if (!d.myAthletes.some(a => a.id === S.ui.aid)) S.ui.aid = prefs.get("aid") && d.myAthletes.some(a => a.id === prefs.get("aid")) ? prefs.get("aid") : d.myAthletes[0]?.id || null;
+}
+async function refresh() { try { await load(); S.error = null; } catch (e) { S.error = e.message; } render(); }
+async function act(fn, ok) { try { await fn(); if (ok) toast(ok); } catch (e) { toast(e.message || "Something went wrong"); } await refresh(); }
+
+/* ---------- lookups ---------- */
+const team = c => S.d.teams.find(t => t.code === c) || { code: c, name: c || "No team", level: "" };
+const curA = () => S.role === "manager" ? S.d.athletes.find(a => a.id === S.ui.mAid) : S.d.myAthletes.find(a => a.id === S.ui.aid);
+const optsFor = code => S.d.practice_options.filter(o => (o.teams || []).includes(code));
+const signupsOf = aid => S.d.practice_signups.filter(s => s.athlete_id === aid);
+const rosterOf = oid => S.d.roster.filter(r => r.option_id === oid);
+const hoursOf = aid => signupsOf(aid).filter(s => !s.waitlisted).reduce((h, s) => h + Number((S.d.practice_options.find(o => o.id === s.option_id) || {}).hours || 0), 0);
+const priceFor = (it, a) => (a && it.level_prices && it.level_prices[a.level] != null) ? Number(it.level_prices[a.level]) : it.price;
+const itemFits = (it, a) => it.active !== false && (!it.teams || !it.teams.length || (a && it.teams.includes(a.team)));
+const meetsFor = lvl => S.d.meets.filter(m => m.kind === "closure" || (m.levels || []).includes(lvl));
+const rsvpOf = (aid, mid) => (S.d.meet_rsvps.find(r => r.athlete_id === aid && r.meet_id === mid) || {}).status;
+const holOf = (aid, did) => { const r = S.d.holiday_responses.find(x => x.athlete_id === aid && x.day_id === did); return r ? r.attending : null; };
+const pkgsFor = lvl => S.d.meet_packages.filter(p => (p.levels || []).includes(lvl));
+function hoursStatus(a) {
+  const t = team(a.team), h = hoursOf(a.id);
+  if (t.min_hours == null) return { h, cls: "line", text: `${h} hrs` };
+  if (h < t.min_hours) return { h, cls: "warn", text: `${+(t.min_hours - h).toFixed(2)} more hrs needed` };
+  if (t.max_hours != null && h > t.max_hours) return { h, cls: "bad", text: `Over the ${t.max_hours} hr max` };
+  return { h, cls: "ok", text: "On track" };
+}
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+const ICON = {
+  home: '<path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  practice: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/>',
+  meets: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
+  shop: '<path d="M6 7h12l-1 13H7z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
+  team: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.4 3-5.5 6-5.5s5.4 2.1 6 5.5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.6c2.6-.3 4.8 1.4 5.5 4.4"/>',
+  overview: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  roster: '<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',
+  orders: '<path d="M5 4h14v16l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 9h6M9 13h6"/>',
+  setup: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'
+};
+const ic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>`;
+const PTABS = [["home","Home"],["practice","Practice"],["meets","Meets"],["shop","Shop"],["team","Team"]];
+const MTABS = [["overview","Overview"],["roster","Roster"],["practice","Practice"],["meets","Meets"],["orders","Orders"],["setup","Setup"]];
+
+function render() {
+  const app = $("#app");
+  if (S.loading) { app.innerHTML = `<div class="wrap empty">Loading…</div>`; return; }
+  if (LIVE && !S.me) { app.innerHTML = viewSignIn(); renderSheet(); return; }
+  if (!S.d) { app.innerHTML = viewNoAccess(); renderSheet(); return; }
+  const set = S.d.set, mgr = S.role === "manager";
+  const tabs = mgr ? MTABS : PTABS, cur = mgr ? S.ui.mtab : S.ui.tab;
+  const kids = !mgr && S.d.myAthletes.length > 1 ? `<div class="wrap kids" role="group" aria-label="Choose athlete"><span class="kids-label">Viewing</span>${S.d.myAthletes.map(a => `<button class="kid" data-act="kid" data-id="${a.id}" aria-pressed="${a.id === S.ui.aid}"><span class="av">${esc(initials(fullName(a)))}</span>${esc(a.first_name)} <span class="muted small" style="font-weight:500">${esc(team(a.team).name)}</span></button>`).join("")}</div>` : "";
+  const band = api.demo ? `<div class="demo-band"><div class="wrap"><b>Demo</b><span>Made-up families. Viewing as ${esc(api.persona().label)}.</span><button class="linkbtn" data-act="persona">Switch person</button></div></div>` : "";
+  let body;
+  try { body = mgr ? ({ overview: mOverview, roster: mRoster, practice: mPractice, meets: mMeets, orders: mOrders, setup: mSetup }[cur] || mOverview)() : parentView(cur); }
+  catch (e) { console.error(e); body = `<div class="card">Something went wrong showing this page: ${esc(e.message)}</div>`; }
+  const cartCount = S.cart.reduce((n, c) => n + c.qty, 0);
+  app.innerHTML = `
+  <header class="top">${band}
+    <div class="wrap top-in"><div class="mark" aria-hidden="true">WK</div>
+      <div class="brand"><b>${esc(set.team_name || "Team")}</b><small>${esc(set.season || "")} season${mgr ? " · Manager" : ""}</small></div>
+      <button class="acct" data-act="account" aria-label="Account">${esc(initials(S.me.email.split("@")[0].replace(/[._]/g, " ")))}</button></div>
+    ${kids}
+  </header>
+  <main class="wrap">${S.error ? `<div class="card" style="margin-bottom:12px"><b>Couldn't load the latest info.</b> <span class="muted">${esc(S.error)}</span></div>` : ""}${body}</main>
+  ${cartCount && ((!mgr && S.ui.tab === "shop") || (mgr && S.ui.mtab === "orders" && S.ui.mAid)) ? `<div class="cartbar"><div class="wrap"><button data-act="cart"><span>${cartCount} item${cartCount > 1 ? "s" : ""} in ${esc(curA()?.first_name || "")}'s order</span><span class="tnum">${money(S.cart.reduce((s, c) => s + (c.price || 0) * c.qty, 0))} · Review</span></button></div></div>` : ""}
+  <nav class="tabs" aria-label="Sections"><div class="wrap">${tabs.map(([k, l]) => `<button class="tab" data-act="tab" data-tab="${k}" ${k === cur ? 'aria-current="page"' : ""}><span class="ic">${ic(k)}</span>${l}</button>`).join("")}</div></nav>`;
+  renderSheet();
+}
+
+function viewSignIn() {
+  return `<div class="wrap signin"><div class="card stack" style="max-width:420px;width:100%">
+    <div class="row"><div class="mark">WK</div><div><h2>Team sign in</h2><div class="muted small">Use the email the team has on file for your family.</div></div></div>
+    <form class="stack" data-form="signin"><div class="field"><label for="si-email">Email</label><input id="si-email" name="email" type="email" required autocomplete="email" placeholder="you@email.com"></div>
+    <button class="btn primary block" type="submit">Email me a sign-in link</button></form>
+    <p class="muted small" id="si-msg" style="margin:0">We'll send a link. Open it on this device to sign in. No password needed.</p></div></div>`;
+}
+function viewNoAccess() {
+  return `<div class="wrap signin"><div class="card stack" style="max-width:440px">
+    <h2>We couldn't find your family</h2><p class="muted" style="margin:0">${esc(S.me?.email || "")} isn't on the team roster yet. Ask your team manager to add this email to your family, then sign in again.</p>
+    <button class="btn" data-act="signout">Sign out</button></div></div>`;
+}
+
+/* ---------------- PARENT ---------------- */
+function parentView(tab) {
+  const a = curA();
+  if (!a) return `<div class="card empty">No athletes are linked to your family yet. Ask your team manager to add them.</div>`;
+  return ({ home: pHome, practice: pPractice, meets: pMeets, shop: pShop, team: pTeam }[tab] || pHome)(a);
+}
+
+function pHome(a) {
+  const t = team(a.team), st = hoursStatus(a), today = todayISO();
+  const mine = signupsOf(a.id).map(s => ({ s, o: S.d.practice_options.find(o => o.id === s.option_id) })).filter(x => x.o).sort((x, y) => x.o.sort - y.o.sort);
+  const pct = t.min_hours ? Math.min(100, st.h / (t.max_hours || t.min_hours) * 100) : 0;
+  const next = meetsFor(a.level).filter(m => m.kind !== "closure" && (m.end_date || m.start_date) >= today).slice(0, 2);
+  const todo = [];
+  const hol = S.d.holiday_days.filter(h => h.day >= today && holOf(a.id, h.id) == null);
+  if (hol.length) todo.push([`Reply for holiday practice (${hol.length} day${hol.length > 1 ? "s" : ""})`, "practice"]);
+  if (t.min_hours != null && st.h < t.min_hours) todo.push([`Pick practice days: ${st.text.toLowerCase()}`, "practice"]);
+  if (pkgsFor(a.level).length && !a.meet_package) todo.push(["Choose a meet fee package", "meets"]);
+  const unrsvp = meetsFor(a.level).filter(m => m.kind !== "closure" && m.start_date >= today && !rsvpOf(a.id, m.id)).length;
+  if (unrsvp) todo.push([`Answer ${unrsvp} meet RSVP${unrsvp > 1 ? "s" : ""}`, "meets"]);
+  if (!a.leo_size || !a.sweatshirt_size) todo.push(["Add sizes for apparel orders", "shop"]);
+  const f = S.d.myFamily; if (f && (!f.p1_phone || !f.p1_email)) todo.push(["Add a phone and email for the directory", "family"]);
+  return `<div class="stack-lg">
+  <section class="card hero stack">
+    <div class="row between"><span class="eyebrow">${esc(t.name)}</span><span class="pill ${st.cls === "ok" ? "lime" : st.cls}">${esc(st.text)}</span></div>
+    <h1>${esc(a.first_name)}'s week</h1>
+    ${t.min_hours != null ? `<div class="stack" style="gap:6px"><div class="meter"><i style="width:${pct}%"></i></div><div class="small muted tnum">${st.h} of ${t.min_hours}${t.max_hours && t.max_hours !== t.min_hours ? `–${t.max_hours}` : ""} hours per week</div></div>` : ""}
+    ${mine.length ? `<div class="list">${mine.map(({ s, o }) => `<div class="li"><div class="grow"><b>${esc(o.label)}</b><div class="small muted">${esc(o.schedule)}</div></div>${s.waitlisted ? `<span class="pill warn">Waitlist #${waitPos(s)}</span>` : `<span class="small tnum">${o.hours} hr</span>`}</div>`).join("")}</div>` : `<p class="muted" style="margin:0">No practice days picked yet.</p>`}
+    <div><button class="btn lime sm" data-act="tab" data-tab="practice">${mine.length ? "Change practice days" : "Pick practice days"}</button></div>
+  </section>
+  ${todo.length ? `<section class="card stack"><h3>To do</h3>${todo.map(([txt, go]) => `<div class="todo"><span class="dot"></span><span class="grow">${esc(txt)}</span><button class="btn sm" data-act="${go === "family" ? "family" : "tab"}" data-tab="${go}">Open</button></div>`).join("")}</section>` : `<section class="card row"><span class="pill ok">All caught up</span><span class="muted small">Nothing needs your attention right now.</span></section>`}
+  <section class="stack"><div class="section-h"><h2>Next meets</h2><button class="linkbtn" data-act="tab" data-tab="meets">Full schedule</button></div>
+    ${next.length ? next.map(m => meetCard(m, a)).join("") : `<div class="card muted">No upcoming meets for ${esc(LEVELS[a.level] || a.level)}.</div>`}</section>
+  <section class="card row between"><div><h3>${esc(S.d.myFamily?.p1_name || "Your family")}</h3><div class="muted small">Contact info, directory listing and carpool</div></div><button class="btn sm" data-act="family">Edit family info</button></section>
+  </div>`;
+}
+function waitPos(s) { return S.d.roster.filter(r => r.option_id === s.option_id && r.waitlisted).sort(by("created_at")).findIndex(r => r.athlete_id === s.athlete_id) + 1 || 1; }
+
+function pPractice(a) {
+  const t = team(a.team), opts = optsFor(a.team), st = hoursStatus(a), today = todayISO();
+  const hol = S.d.holiday_days.filter(h => h.day >= today);
+  return `<div class="stack-lg">
+  <section class="stack"><span class="eyebrow">${esc(t.name)} · Practice sign-up</span><h1>Pick ${t.signup_mode === "group" ? "a group" : "practice days"}</h1>
+    <p class="muted" style="margin:0">${esc(t.practice_note || "")} ${esc(S.d.set.practice_note || "")}</p>
+    ${t.min_hours != null ? `<div class="row"><span class="pill ${st.cls}">${esc(st.text)}</span><span class="small muted tnum">${st.h} hrs signed up · ${t.min_hours}${t.max_hours && t.max_hours !== t.min_hours ? `–${t.max_hours}` : ""} hrs required</span></div>` : ""}
+  </section>
+  ${opts.length ? `<section class="stack">${opts.map(o => optCard(o, a, t)).join("")}</section>` : `<div class="card empty">Practice options for ${esc(t.name)} haven't been posted yet.</div>`}
+  ${hol.length ? `<section class="card stack"><div><h3>Holiday practice</h3><p class="muted small" style="margin:4px 0 0">Let the coaches know if ${esc(a.first_name)} will come, so they can plan how many coaches to schedule.</p></div>
+    <div class="list">${hol.map(h => { const v = holOf(a.id, h.id); return `<div class="li"><div class="grow"><b>${esc(h.label)}</b><div class="small muted">${fmtDay(h.day)}</div></div>
+    <div class="seg" role="group" aria-label="${esc(h.label)}"><button class="y" data-act="hol" data-day="${h.id}" data-v="1" aria-pressed="${v === true}">Yes</button><button class="n" data-act="hol" data-day="${h.id}" data-v="0" aria-pressed="${v === false}">No</button></div></div>`; }).join("")}</div></section>` : ""}
+  </div>`;
+}
+function optCard(o, a, t) {
+  const ro = rosterOf(o.id), filled = ro.filter(r => !r.waitlisted), wait = ro.filter(r => r.waitlisted);
+  const mine = signupsOf(a.id).find(s => s.option_id === o.id), left = Math.max(0, o.capacity - filled.length), full = left === 0;
+  const dayTxt = (o.schedule.match(/^[A-Za-z]{3}/) || [""])[0];
+  const days = (o.schedule.match(/\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/g) || []);
+  const key = `rm-${o.id}`;
+  let btn;
+  if (mine) btn = `<button class="btn sm ${S.armed === key ? "armed" : "danger"}" data-act="unsign" data-opt="${o.id}">${S.armed === key ? "Tap again to remove" : mine.waitlisted ? "Leave waitlist" : "Remove"}</button>`;
+  else if (t.signup_mode === "group" && signupsOf(a.id).some(s => optsFor(a.team).some(x => x.id === s.option_id))) btn = `<button class="btn sm" data-act="sign" data-opt="${o.id}">${full ? "Switch & join waitlist" : "Switch to this group"}</button>`;
+  else btn = `<button class="btn sm ${full ? "" : "primary"}" data-act="sign" data-opt="${o.id}">${full ? "Join waitlist" : t.signup_mode === "group" ? "Choose this group" : "Add this day"}</button>`;
+  const cap = Math.min(o.capacity, 24);
+  return `<article class="card opt ${mine && !mine.waitlisted ? "on" : ""}">
+    <div class="opt-h"><div class="day"><b>${esc(days.length > 1 ? days.map(d => d[0]).join("/") : dayTxt)}</b><small>${o.hours} hr${o.hours == 1 ? "" : "s"}</small></div>
+      <div class="grow"><h3>${esc(o.label)}</h3><div class="muted small">${esc(o.schedule)}</div>${o.note ? `<div class="small">${esc(o.note)}</div>` : ""}</div>
+      ${mine ? (mine.waitlisted ? `<span class="pill warn">Waitlist #${waitPos(mine)}</span>` : `<span class="pill lime">Signed up</span>`) : full ? `<span class="pill bad">Full</span>` : `<span class="pill ok">${left} open</span>`}</div>
+    <div class="row between"><div class="tally" aria-label="${filled.length} of ${o.capacity} spots taken">${Array.from({ length: cap }, (_, i) => `<span class="${i < filled.length ? (filled[i]?.athlete_id === a.id ? "me" : "f") : ""}"></span>`).join("")}</div>
+      <span class="small muted tnum">${filled.length}/${o.capacity}${wait.length ? ` · ${wait.length} waiting` : ""}</span></div>
+    <div class="row between"><details><summary>Who's coming (${filled.length})</summary><div class="names">${filled.map(r => `<span class="pill line">${esc(r.display_name)}</span>`).join("") || `<span class="muted small">No one yet</span>`}${wait.length ? `<span class="pill warn">Waitlist: ${wait.map(r => esc(r.display_name)).join(", ")}</span>` : ""}</div></details>${btn}</div>
+  </article>`;
+}
+
+function meetCard(m, a, past, showLv) {
+  const r = dateRange(m.start_date, m.end_date);
+  if (m.kind === "closure") return `<div class="meet closure ${past ? "past" : ""}"><div class="date"><small>${r.top}</small><b>${r.big}</b><small>${r.wd}</small></div><div class="card grow" style="padding:12px 14px"><b>${esc(m.name)}</b></div></div>`;
+  const canR = a && (m.levels || []).includes(a.level), v = canR ? rsvpOf(a.id, m.id) : null;
+  return `<div class="meet ${past ? "past" : ""}"><div class="date"><small>${r.top}</small><b>${r.big}</b><small>${r.wd}</small></div>
+    <article class="card grow stack" style="gap:8px;padding:14px"><div class="row">${(m.federations || []).map(f => `<span class="fed ${esc(f.replace(/\W/g, ""))}">${esc(f)}</span>`).join("")}${m.kind === "clinic" ? `<span class="fed">Clinic</span>` : ""}</div>
+      <h3>${esc(m.name)}</h3><div class="small muted">${esc([m.host && m.host !== m.location ? "Host: " + m.host : null, m.location].filter(Boolean).join(" · "))}</div>
+      ${m.note ? `<div class="small">${esc(m.note)}</div>` : ""}
+      ${showLv ? `<div class="row">${(m.levels || []).map(l => `<span class="pill line">${esc(l)}</span>`).join("")}</div>` : ""}
+      ${canR && !past ? `<div class="row between"><span class="small muted">Will ${esc(a.first_name)} compete?</span><div class="seg" role="group"><button class="y" data-act="rsvp" data-meet="${m.id}" data-v="yes" aria-pressed="${v === "yes"}">Yes</button><button class="m" data-act="rsvp" data-meet="${m.id}" data-v="maybe" aria-pressed="${v === "maybe"}">Maybe</button><button class="n" data-act="rsvp" data-meet="${m.id}" data-v="no" aria-pressed="${v === "no"}">No</button></div></div>` : ""}
+    </article></div>`;
+}
+function timeline(list, a, showLv) {
+  const today = todayISO(); let out = "", mk = "";
+  const up = list.filter(m => (m.end_date || m.start_date) >= today), past = list.filter(m => (m.end_date || m.start_date) < today);
+  up.forEach(m => { const k = m.start_date.slice(0, 7); if (k !== mk) { mk = k; const d = D(m.start_date); out += `<div class="month">${MONTH[d.getMonth()]} ${d.getFullYear()}</div>`; } out += meetCard(m, a, false, showLv); });
+  if (past.length) out += `<details style="margin-top:12px"><summary>Earlier this season (${past.length})</summary><div class="stack" style="margin-top:10px">${past.map(m => meetCard(m, a, true, showLv)).join("")}</div></details>`;
+  return out || `<div class="card empty">No meets match these filters.</div>`;
+}
+function pMeets(a) {
+  const scope = S.ui.meetScope, fed = S.ui.fed;
+  let list = scope === "mine" ? meetsFor(a.level) : S.d.meets.slice();
+  if (fed !== "all") list = list.filter(m => m.kind === "closure" || (m.federations || []).includes(fed));
+  const pk = pkgsFor(a.level), chosen = S.d.meet_packages.find(p => p.id === a.meet_package);
+  return `<div class="stack-lg">
+  <section class="stack"><span class="eyebrow">Spring competition · ${esc(S.d.set.season || "")}</span><h1>Meet schedule</h1>
+    <div class="chips" role="group" aria-label="Whose meets"><button class="chip" data-act="meetScope" data-v="mine" aria-pressed="${scope === "mine"}">${esc(a.first_name)}'s meets · ${esc(LEVELS[a.level] || a.level)}</button><button class="chip" data-act="meetScope" data-v="all" aria-pressed="${scope === "all"}">All teams</button></div>
+    <div class="chips" role="group" aria-label="Federation"><button class="chip" data-act="fed" data-v="all" aria-pressed="${fed === "all"}">All</button>${FEDS.filter(f => S.d.meets.some(m => (m.federations || []).includes(f))).map(f => `<button class="chip" data-act="fed" data-v="${f}" aria-pressed="${fed === f}">${f}</button>`).join("")}</div>
+  </section>
+  ${pk.length ? `<section class="card stack"><div class="row between"><div><h3>Meet fees</h3><div class="small muted">${chosen ? `${esc(chosen.name)} · ${esc(a.meet_plan || "plan not picked")}` : "Not chosen yet"}</div></div><button class="btn sm ${chosen ? "" : "primary"}" data-act="pkg">${chosen ? "Change" : "Choose package"}</button></div>
+    ${chosen ? `<div class="small muted">${esc(chosen.due_note || "")}</div>` : ""}</section>` : ""}
+  <section class="stack">${timeline(list, a, scope === "all")}</section>
+  <p class="small muted">${a.level === "XG" || a.level === "XP" || a.level === "XD" ? "If competing in both USAG and TAAF, compete in at least 3 TAAF Qualifiers to qualify for TAAF State." : "Compete in 3 of the TAAF Qualifiers to qualify for your level's TAAF State meet."}</p>
+  </div>`;
+}
+
+function pShop(a) {
+  const items = S.d.store_items.filter(it => itemFits(it, a));
+  const myOrders = S.d.orders.filter(o => o.family_id === a.family_id).sort(by("created_at")).reverse();
+  const sf = Object.entries(SIZE_FIELDS).filter(([, v]) => !v.teams || v.teams.includes(a.team));
+  return `<div class="stack-lg">
+  <section class="stack"><span class="eyebrow">Apparel & gear · ${esc(team(a.team).name)}</span><h1>Shop for ${esc(a.first_name)}</h1>
+    <p class="muted small" style="margin:0">Only items for ${esc(team(a.team).name)} are shown. ${esc(S.d.set.payment_note || "")}</p></section>
+  <section class="card stack"><div class="row between"><h3>${esc(a.first_name)}'s sizes</h3><button class="btn sm" data-act="sizes">Update sizes</button></div>
+    <div class="sizes">${sf.map(([k, v]) => `<div class="size"><small>${v.label}</small><b>${esc(a[k] || "—")}</b></div>`).join("")}</div>
+    <div class="small muted">Sizes fill in automatically when you order. Growing? Use "Update sizes" and tap + to size up.</div></section>
+  <section class="grid2">${items.map(it => { const p = priceFor(it, a); return `<article class="card item">
+    <div class="row between"><span class="eyebrow">${it.category === "family" ? "Parents & siblings" : "Athlete"}</span>${it.required_note ? `<span class="pill warn">Required*</span>` : ""}</div>
+    <h3>${esc(it.name)}</h3><div class="price">${money(p)}</div>
+    ${it.description ? `<div class="small muted">${esc(it.description)}</div>` : ""}${it.required_note ? `<div class="small">*${esc(it.required_note)}</div>` : ""}
+    <div style="margin-top:auto"><button class="btn block" data-act="additem" data-id="${it.id}">Add to order</button></div></article>`; }).join("")}</section>
+  <section class="stack"><h2>${S.role === "manager" ? "This family's orders" : "Your orders"}</h2>${myOrders.length ? myOrders.map(o => orderCard(o, S.role === "manager")).join("") : `<div class="card muted">No orders yet.</div>`}</section>
+  </div>`;
+}
+function orderCard(o, mgr) {
+  const items = S.d.order_items.filter(i => i.order_id === o.id), a = S.d.athletes.find(x => x.id === o.athlete_id), f = S.d.families.find(x => x.id === o.family_id);
+  const cls = { submitted: "warn", ordered: "line", ready: "lime", picked_up: "ok", cancelled: "bad" }[o.status] || "line";
+  return `<article class="card stack" style="gap:8px"><div class="row between"><div><b>${a ? esc(fullName(a)) : "Family order"}</b>${mgr && f ? `<div class="small muted">${esc(f.p1_name || "")}${f.p1_phone ? " · " + esc(f.p1_phone) : ""}</div>` : ""}<div class="small muted">${new Date(o.created_at).toLocaleDateString()} · ${esc(o.payment_plan || "")}</div></div>
+    ${mgr ? `<select data-act="ostatus" data-id="${o.id}" aria-label="Order status" style="border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--surface)">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}" ${k === o.status ? "selected" : ""}>${v}</option>`).join("")}</select>` : `<span class="pill ${cls}">${STATUS[o.status] || o.status}</span>`}</div>
+    <div class="list">${items.map(i => `<div class="li" style="padding:8px 0"><div class="grow"><span>${i.qty > 1 ? i.qty + " × " : ""}${esc(i.item_name)}</span>${Object.keys(i.choices || {}).length ? `<div class="small muted">${Object.entries(i.choices).map(([k, v]) => `${esc(k)}: ${esc(v)}`).join(" · ")}</div>` : ""}</div><span class="tnum small">${i.unit_price == null ? "TBD" : money(i.unit_price * i.qty)}</span></div>`).join("")}</div>
+    <div class="row between"><span class="small muted">${o.note ? esc(o.note) : "Tax added"}</span><b class="tnum">${money(o.total)}</b></div></article>`;
+}
+
+function pTeam(a) {
+  const scope = S.ui.dirScope, ride = S.ui.ride, q = S.ui.q.trim().toLowerCase();
+  let fams = S.d.directory.slice();
+  if (scope === "mine") fams = fams.filter(f => (f.athletes || []).some(x => x.team === a.team));
+  if (ride === "offer") fams = fams.filter(f => f.carpool === "offer" || f.carpool === "both");
+  if (ride === "need") fams = fams.filter(f => f.carpool === "need" || f.carpool === "both");
+  if (q) fams = fams.filter(f => [f.p1_name, f.p2_name, f.city, ...(f.athletes || []).map(fullName)].join(" ").toLowerCase().includes(q));
+  fams.sort((x, y) => fullName((x.athletes || [])[0] || {}).localeCompare(fullName((y.athletes || [])[0] || {})));
+  const listed = S.d.myFamily?.show_in_directory;
+  return `<div class="stack-lg">
+  <section class="stack"><span class="eyebrow">Team directory</span><h1>Families & carpools</h1>
+    <div class="field"><label for="dir-q" class="sr">Search</label><input id="dir-q" type="search" placeholder="Search by athlete, parent or city" value="${esc(S.ui.q)}" data-input="q"></div>
+    <div class="chips" role="group"><button class="chip" data-act="dirScope" data-v="mine" aria-pressed="${scope === "mine"}">${esc(team(a.team).name)}</button><button class="chip" data-act="dirScope" data-v="all" aria-pressed="${scope === "all"}">Whole team</button>
+      <button class="chip" data-act="ride" data-v="${ride === "offer" ? "all" : "offer"}" aria-pressed="${ride === "offer"}">Can give rides</button><button class="chip" data-act="ride" data-v="${ride === "need" ? "all" : "need"}" aria-pressed="${ride === "need"}">Need rides</button></div>
+    <div class="small muted">${listed === false ? `Your family is <b>not listed</b>. ` : ""}Only families who chose to be listed appear here. <button class="linkbtn" data-act="family">Change your listing or carpool</button></div>
+  </section>
+  <section class="stack">${fams.length ? fams.map(famCard).join("") : `<div class="card empty">No families match.</div>`}</section></div>`;
+}
+function contactLine(name, email, phone) {
+  if (!name && !email && !phone) return "";
+  return `<div class="contact"><b>${esc(name || "")}</b>${phone ? `<span class="row" style="gap:4px"><a href="tel:${esc(phone.replace(/[^\d+]/g, ""))}" class="sel tnum">${esc(phone)}</a><button class="copy" data-act="copy" data-v="${esc(phone)}">Copy</button></span>` : ""}${email ? `<span class="row" style="gap:4px"><a href="mailto:${esc(email)}" class="sel">${esc(email)}</a><button class="copy" data-act="copy" data-v="${esc(email)}">Copy</button></span>` : ""}</div>`;
+}
+function famCard(f) {
+  const cp = f.carpool && f.carpool !== "none";
+  return `<article class="card fam"><div class="row between"><div class="row">${(f.athletes || []).map(x => `<span class="row" style="gap:6px"><b class="fam-name">${esc(fullName(x))}</b><span class="pill line">${esc(team(x.team).name)}</span></span>`).join("")}</div>${f.city ? `<span class="small muted">${esc(f.city)}</span>` : ""}</div>
+    ${contactLine(f.p1_name, f.p1_email, f.p1_phone)}${contactLine(f.p2_name, f.p2_email, f.p2_phone)}
+    ${cp ? `<div class="row"><span class="pill ${f.carpool === "need" ? "warn" : "lime"}">${CARPOOL[f.carpool]}</span>${f.carpool_note ? `<span class="small">${esc(f.carpool_note)}</span>` : ""}</div>` : ""}</article>`;
+}
+
+/* ---------------- MANAGER ---------------- */
+function mOverview() {
+  const d = S.d, act = d.athletes.filter(a => a.active !== false), today = todayISO();
+  const under = act.filter(a => { const t = team(a.team); return t.min_hours != null && hoursOf(a.id) < t.min_hours; });
+  const missing = d.families.filter(f => !f.p1_email || !f.p1_phone);
+  const open = d.orders.filter(o => o.status === "submitted");
+  const waits = d.practice_signups.filter(s => s.waitlisted).length;
+  const next = d.meets.filter(m => m.kind !== "closure" && m.start_date >= today)[0];
+  const hol = d.holiday_days.filter(h => h.day >= today);
+  return `<div class="stack-lg">
+  <section class="stack"><span class="eyebrow">Manager</span><h1>Team at a glance</h1></section>
+  <section class="stat">
+    <div class="card"><span class="eyebrow">Athletes</span><b>${act.length}</b><span class="small muted">${d.families.length} families</span></div>
+    <div class="card"><span class="eyebrow">Under hours</span><b>${under.length}</b><span class="small muted">below their minimum</span></div>
+    <div class="card"><span class="eyebrow">Waitlisted</span><b>${waits}</b><span class="small muted">practice spots</span></div>
+    <div class="card"><span class="eyebrow">New orders</span><b>${open.length}</b><span class="small muted">not yet ordered</span></div>
+  </section>
+  ${missing.length ? `<section class="card stack"><h3>Families missing a phone or email</h3><div class="list">${missing.map(f => `<div class="li"><div class="grow">${esc(f.p1_name || "No parent name")} <span class="small muted">${esc(S.d.athletes.filter(a => a.family_id === f.id).map(fullName).join(", "))}</span></div><button class="btn sm" data-act="form" data-table="families" data-id="${f.id}">Fix</button></div>`).join("")}</div></section>` : ""}
+  ${hol.length ? `<section class="card stack"><div class="row between"><h3>Holiday practice headcount</h3><button class="btn sm" data-act="export" data-what="holiday">Export</button></div>
+    <div class="tablewrap"><table><thead><tr><th>Team</th>${hol.map(h => `<th class="n">${esc(h.label.replace(" Monday", " Mon").replace(" Tuesday", " Tue"))}<br>${fmtDay(h.day).split(", ")[1]}</th>`).join("")}</tr></thead><tbody>
+    ${d.teams.map(t => { const ath = act.filter(a => a.team === t.code); if (!ath.length) return ""; return `<tr><td>${esc(t.name)}</td>${hol.map(h => { const y = ath.filter(a => holOf(a.id, h.id) === true).length, nr = ath.filter(a => holOf(a.id, h.id) == null).length; return `<td class="n"><b>${y}</b> yes${nr ? `<div class="muted small">${nr} no reply</div>` : ""}</td>`; }).join("")}</tr>`; }).join("")}
+    </tbody></table></div></section>` : ""}
+  <section class="card stack"><h3>Practice spots</h3><div class="list">${d.practice_options.map(o => { const ro = rosterOf(o.id), f = ro.filter(r => !r.waitlisted).length, w = ro.length - f;
+    return `<div class="li"><div class="grow"><b>${esc(o.label)}</b> <span class="small muted">${esc((o.teams || []).join(", "))} · ${esc(o.schedule)}</span><div class="meter" style="margin-top:6px"><i style="width:${Math.min(100, f / o.capacity * 100)}%"></i></div></div><span class="tnum small">${f}/${o.capacity}</span>${w ? `<span class="pill warn">${w} waiting</span>` : ""}</div>`; }).join("")}</div></section>
+  ${next ? `<section class="card stack"><h3>Next meet · ${esc(next.name)}</h3><div class="small muted">${dateRange(next.start_date, next.end_date).md} · ${esc(next.location || "")}</div>${rsvpTable(next)}</section>` : ""}
+  ${under.length ? `<section class="card stack"><h3>Below required hours</h3><div class="list">${under.map(a => `<div class="li"><div class="grow">${esc(fullName(a))} <span class="small muted">${esc(team(a.team).name)}</span></div><span class="pill warn tnum">${hoursOf(a.id)} / ${team(a.team).min_hours} hrs</span></div>`).join("")}</div></section>` : ""}
+  </div>`;
+}
+function rsvpTable(m) {
+  const ath = S.d.athletes.filter(a => a.active !== false && (m.levels || []).includes(a.level));
+  const c = k => ath.filter(a => (rsvpOf(a.id, m.id) || "none") === k).length;
+  return `<div class="row"><span class="pill ok">${c("yes")} yes</span><span class="pill warn">${c("maybe")} maybe</span><span class="pill bad">${c("no")} no</span><span class="pill line">${c("none")} no reply</span></div>`;
+}
+function mRoster() {
+  const d = S.d, tf = S.ui.rosterTeam, q = S.ui.q.trim().toLowerCase();
+  let ath = d.athletes.slice().sort((x, y) => (team(x.team).sort - team(y.team).sort) || fullName(x).localeCompare(fullName(y)));
+  if (tf !== "all") ath = ath.filter(a => a.team === tf);
+  if (q) ath = ath.filter(a => { const f = d.families.find(x => x.id === a.family_id) || {}; return [fullName(a), f.p1_name, f.p2_name, f.p1_email, f.p2_email].join(" ").toLowerCase().includes(q); });
+  return `<div class="stack-lg">
+  <section class="stack"><div class="row between"><h1>Roster</h1><div class="row"><button class="btn sm" data-act="export" data-what="roster">Export</button><button class="btn sm" data-act="form" data-table="families">Add family</button><button class="btn sm primary" data-act="form" data-table="athletes">Add athlete</button></div></div>
+    <div class="field"><input id="ros-q" type="search" placeholder="Search athletes, parents, emails" value="${esc(S.ui.q)}" data-input="q" aria-label="Search roster"></div>
+    <div class="chips"><button class="chip" data-act="rosterTeam" data-v="all" aria-pressed="${tf === "all"}">All (${d.athletes.length})</button>${d.teams.map(t => `<button class="chip" data-act="rosterTeam" data-v="${t.code}" aria-pressed="${tf === t.code}">${esc(t.name)} (${d.athletes.filter(a => a.team === t.code).length})</button>`).join("")}</div>
+    <div class="seg" role="group" aria-label="Show"><button data-act="rosterMode" data-v="contacts" aria-pressed="${S.ui.rosterMode === "contacts"}">Contacts</button><button data-act="rosterMode" data-v="sizes" aria-pressed="${S.ui.rosterMode === "sizes"}">Sizes</button></div></section>
+  <section class="card" style="padding:4px 16px"><div class="list">${ath.map(a => { if (S.ui.rosterMode === "sizes") return sizeRow(a); const f = d.families.find(x => x.id === a.family_id) || {}, st = hoursStatus(a);
+    const flags = [!f.p1_email && "no email", !f.p1_phone && "no phone", !a.leo_size && "no sizes", a.active === false && "inactive"].filter(Boolean);
+    return `<div class="li"><div class="grow"><b>${esc(fullName(a))}</b> <span class="small muted">${esc(team(a.team).name)} · ${esc(a.level || "")}</span>
+      <div class="small muted">${esc(f.p1_name || "No parent on file")}${f.p1_phone ? " · " + esc(f.p1_phone) : ""}${f.p1_email ? " · " + esc(f.p1_email) : ""}</div>
+      <div class="row" style="margin-top:4px"><span class="pill ${st.cls} tnum">${st.h} hrs</span>${flags.map(x => `<span class="pill bad">${x}</span>`).join("")}</div></div>
+      <div class="stack" style="gap:6px"><button class="btn sm" data-act="form" data-table="athletes" data-id="${a.id}">Edit</button>${f.id ? `<button class="btn sm" data-act="form" data-table="families" data-id="${f.id}">Family</button>` : ""}</div></div>`; }).join("") || `<div class="empty">No athletes match.</div>`}</div></section></div>`;
+}
+function sizeRow(a) {
+  const sf = Object.entries(SIZE_FIELDS).filter(([, v]) => !v.teams || v.teams.includes(a.team));
+  const missing = sf.filter(([k]) => !a[k]).length;
+  return `<div class="li"><div class="grow"><b>${esc(fullName(a))}</b> <span class="small muted">${esc(team(a.team).name)}</span>
+    <div class="row" style="margin-top:6px;gap:6px">${sf.map(([k, v]) => `<span class="pill ${a[k] ? "line" : "bad"}"><span class="muted">${v.label}</span> ${esc(a[k] || "—")}</span>`).join("")}</div>
+    ${a.sizes_updated_at ? `<div class="small muted" style="margin-top:4px">Updated ${new Date(a.sizes_updated_at).toLocaleDateString()}</div>` : missing ? `<div class="small muted" style="margin-top:4px">${missing} size${missing > 1 ? "s" : ""} missing</div>` : ""}</div>
+    <div class="stack" style="gap:6px"><button class="btn sm" data-act="msizes" data-id="${a.id}">Edit sizes</button><button class="btn sm" data-act="morder" data-id="${a.id}">Order</button></div></div>`;
+}
+function mPractice() {
+  const d = S.d;
+  return `<div class="stack-lg">
+  <section class="row between"><h1>Practice</h1><div class="row"><button class="btn sm" data-act="export" data-what="signups">Export</button><button class="btn sm primary" data-act="form" data-table="practice_options">Add practice option</button></div></section>
+  <section class="card stack"><h3>Team requirements</h3><div class="list">${d.teams.map(t => `<div class="li"><div class="grow"><b>${esc(t.name)}</b> <span class="small muted">${t.signup_mode === "group" ? "Pick one group" : "Pick days"} · ${t.min_hours ?? "–"}${t.max_hours != null && t.max_hours !== t.min_hours ? "–" + t.max_hours : ""} hrs</span></div><button class="btn sm" data-act="form" data-table="teams" data-id="${t.code}">Edit</button></div>`).join("")}</div></section>
+  ${d.practice_options.map(o => { const subs = d.practice_signups.filter(s => s.option_id === o.id).sort(by("created_at")), f = subs.filter(s => !s.waitlisted), w = subs.filter(s => s.waitlisted);
+    const nm = s => { const a = d.athletes.find(x => x.id === s.athlete_id); return a ? fullName(a) : "?"; };
+    return `<article class="card stack"><div class="row between"><div><h3>${esc(o.label)}</h3><div class="small muted">${esc(o.schedule)} · ${o.hours} hrs · ${esc((o.teams || []).map(c => team(c).name).join(", "))}</div></div><div class="row"><span class="pill ${f.length >= o.capacity ? "bad" : "ok"} tnum">${f.length}/${o.capacity}</span><button class="btn sm" data-act="form" data-table="practice_options" data-id="${o.id}">Edit</button></div></div>
+      <div class="names">${f.map(s => `<span class="pill line">${esc(nm(s))} <button class="copy" data-act="mremove" data-a="${s.athlete_id}" data-o="${o.id}" aria-label="Remove ${esc(nm(s))}">${S.armed === "mr-" + s.athlete_id + o.id ? "Confirm" : "×"}</button></span>`).join("") || `<span class="muted small">No sign-ups</span>`}</div>
+      ${w.length ? `<div class="stack" style="gap:6px"><span class="eyebrow">Waitlist</span><div class="names">${w.map((s, i) => `<span class="pill warn">${i + 1}. ${esc(nm(s))} <button class="copy" data-act="promote" data-a="${s.athlete_id}" data-o="${o.id}">Give spot</button></span>`).join("")}</div></div>` : ""}</article>`; }).join("")}
+  </div>`;
+}
+function mMeets() {
+  const d = S.d;
+  return `<div class="stack-lg">
+  <section class="row between"><h1>Meets</h1><div class="row"><button class="btn sm" data-act="export" data-what="rsvps">Export RSVPs</button><button class="btn sm primary" data-act="form" data-table="meets">Add meet</button></div></section>
+  <section class="card stack"><div class="row between"><h3>Meet fee packages</h3><button class="btn sm" data-act="export" data-what="packages">Export choices</button></div><div class="list">${d.meet_packages.map(p => `<div class="li"><div class="grow"><b>${esc(p.name)}</b> <span class="small muted">${esc((p.levels || []).join(", "))} · ${money(p.full_price)} full · ${money(p.half_price)} half · ${money(p.monthly_price)}/mo</span><div class="small muted">${d.athletes.filter(a => a.meet_package === p.id).length} athletes chose this</div></div><button class="btn sm" data-act="form" data-table="meet_packages" data-id="${p.id}">Edit</button></div>`).join("")}</div><button class="btn sm" data-act="form" data-table="meet_packages">Add package</button></section>
+  <section class="stack">${d.meets.map(m => { const r = dateRange(m.start_date, m.end_date); return `<article class="card stack" style="gap:8px"><div class="row between"><div><span class="small muted">${r.md} · ${r.wd}</span><h3>${esc(m.name)}</h3><div class="small muted">${esc([m.host, m.location].filter(Boolean).join(" · "))} ${m.kind !== "meet" ? "· " + m.kind : ""}</div></div><button class="btn sm" data-act="form" data-table="meets" data-id="${m.id}">Edit</button></div>
+    ${m.kind === "closure" ? "" : `<div class="row">${(m.federations || []).map(f => `<span class="fed ${esc(f.replace(/\W/g, ""))}">${esc(f)}</span>`).join("")}${(m.levels || []).map(l => `<span class="pill line">${l}</span>`).join("")}</div>${rsvpTable(m)}`}</article>`; }).join("")}</section></div>`;
+}
+function mOrders() {
+  const d = S.d, f = S.ui.orderStatus, oa = curA();
+  if (oa) return `<div class="stack-lg"><section class="card row between" style="background:var(--surface-2)"><div><span class="eyebrow">Manager order</span><div><b>Ordering for ${esc(fullName(oa))}</b> <span class="small muted">${esc(team(oa.team).name)}</span></div><div class="small muted">The order goes on this family's account, just like a parent order.</div></div><div class="row"><button class="btn sm" data-act="pickath" data-then="order">Change athlete</button><button class="btn sm primary" data-act="mdone">Done</button></div></section>${pShop(oa)}</div>`;
+  let os = d.orders.slice().sort(by("created_at")).reverse();
+  if (f === "open") os = os.filter(o => ["submitted","ordered","ready"].includes(o.status)); else if (f !== "all") os = os.filter(o => o.status === f);
+  const live = d.orders.filter(o => o.status !== "cancelled").map(o => o.id);
+  const tot = {}; d.order_items.filter(i => live.includes(i.order_id)).forEach(i => { const k = i.item_name + (Object.keys(i.choices || {}).length ? " — " + Object.entries(i.choices).map(([a, b]) => `${a}: ${b}`).join(", ") : ""); tot[k] = (tot[k] || 0) + i.qty; });
+  return `<div class="stack-lg">
+  <section class="row between"><h1>Orders</h1><div class="row"><button class="btn sm primary" data-act="pickath" data-then="order">Order for an athlete</button><button class="btn sm" data-act="export" data-what="orders">Export orders</button><button class="btn sm" data-act="export" data-what="totals">Vendor totals</button></div></section>
+  <div class="chips">${[["open","Open"],["submitted","Submitted"],["ordered","Ordered"],["ready","Ready"],["picked_up","Picked up"],["all","All"]].map(([k, l]) => `<button class="chip" data-act="orderStatus" data-v="${k}" aria-pressed="${f === k}">${l}</button>`).join("")}</div>
+  <section class="card stack"><h3>Vendor totals</h3><p class="small muted" style="margin:0">Every item and size across orders that aren't cancelled. Use this to place the order with the vendor.</p>
+    <div class="tablewrap"><table><thead><tr><th>Item & size</th><th class="n">Qty</th></tr></thead><tbody>${Object.entries(tot).sort().map(([k, v]) => `<tr><td style="white-space:normal">${esc(k)}</td><td class="n">${v}</td></tr>`).join("") || `<tr><td colspan="2" class="muted">No orders yet</td></tr>`}</tbody></table></div></section>
+  <section class="stack">${os.map(o => orderCard(o, true)).join("") || `<div class="card empty">No orders here.</div>`}</section></div>`;
+}
+function mSetup() {
+  const d = S.d;
+  return `<div class="stack-lg"><h1>Setup</h1>
+  <section class="card stack"><div class="row between"><h3>Store items</h3><button class="btn sm primary" data-act="form" data-table="store_items">Add item</button></div>
+    <div class="list">${d.store_items.map(it => `<div class="li"><div class="grow"><b>${esc(it.name)}</b> <span class="small muted">${money(it.price)}${Object.keys(it.level_prices || {}).length ? " · " + Object.entries(it.level_prices).map(([k, v]) => `${k} ${money(v)}`).join(", ") : ""} · ${(it.teams || []).length ? esc(it.teams.join(", ")) : "all teams"}</span></div>${it.active === false ? `<span class="pill line">Hidden</span>` : ""}<button class="btn sm" data-act="form" data-table="store_items" data-id="${it.id}">Edit</button></div>`).join("")}</div></section>
+  <section class="card stack"><div class="row between"><h3>Holiday practice days</h3><button class="btn sm" data-act="form" data-table="holiday_days">Add day</button></div>
+    <div class="list">${d.holiday_days.map(h => `<div class="li"><div class="grow"><b>${esc(h.label)}</b> <span class="small muted">${fmtDay(h.day)}</span></div><button class="btn sm" data-act="form" data-table="holiday_days" data-id="${h.id}">Edit</button></div>`).join("")}</div></section>
+  <section class="card stack"><h3>Team settings</h3><div class="list">${d.settings.map(s => `<div class="li"><div class="grow"><b>${esc(s.key.replace(/_/g, " "))}</b><div class="small muted">${esc(s.value)}</div></div><button class="btn sm" data-act="form" data-table="settings" data-id="${esc(s.key)}">Edit</button></div>`).join("")}</div></section>
+  </div>`;
+}
+
+/* =====================================================================
+   SHEETS
+   ===================================================================== */
+function openSheet(s) { S.sheet = s; renderSheet(); setTimeout(() => { const f = document.querySelector(".sheet input:not([type=hidden]), .sheet select"); if (f && s.focus !== false) f.focus({ preventScroll: true }); }, 30); }
+function closeSheet() { S.sheet = null; renderSheet(); }
+function renderSheet() {
+  const root = $("#sheet-root"), s = S.sheet;
+  if (!s) { root.innerHTML = ""; document.body.style.overflow = ""; return; }
+  const body = { pickath: shPickAth, family: shFamily, sizes: shSizes, item: shItem, cart: shCart, pkg: shPkg, form: shForm, csv: shCsv, account: shAccount, persona: shPersona }[s.type](s);
+  root.innerHTML = `<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(body.title)}"><div class="sheet-h"><h2>${esc(body.title)}</h2><button class="x" data-act="close" aria-label="Close">×</button></div><div class="sheet-b">${body.html}</div></div></div>`;
+  document.body.style.overflow = "hidden";
+}
+const fld = (id, label, val, type = "text", extra = "") => `<div class="field"><label for="${id}">${label}</label><input id="${id}" name="${id}" type="${type}" value="${esc(val ?? "")}" ${extra}></div>`;
+const sel = (id, label, val, opts, blank) => `<div class="field"><label for="${id}">${label}</label><select id="${id}" name="${id}">${blank ? `<option value="">${blank}</option>` : ""}${opts.map(o => { const [v, l] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(v)}" ${String(v) === String(val ?? "") ? "selected" : ""}>${esc(l)}</option>`; }).join("")}</select></div>`;
+
+function shFamily() {
+  const f = S.d.myFamily || {};
+  return { title: "Family info", html: `<form class="stack" data-form="family">
+    <p class="small muted" style="margin:0">This is what other team families see in the directory if you choose to be listed. Coaches always see it.</p>
+    <h3>Parent / guardian 1</h3><div class="f2">${fld("p1_name", "Name", f.p1_name, "text", 'autocomplete="name"')}${fld("p1_phone", "Phone", f.p1_phone, "tel", 'autocomplete="tel"')}</div>${fld("p1_email", "Email (used to sign in)", f.p1_email, "email")}
+    <h3>Parent / guardian 2</h3><div class="f2">${fld("p2_name", "Name", f.p2_name)}${fld("p2_phone", "Phone", f.p2_phone, "tel")}</div>${fld("p2_email", "Email (can also sign in)", f.p2_email, "email")}
+    ${fld("city", "City", f.city, "text", 'placeholder="For carpool matching, e.g. Flower Mound"')}
+    <h3>Carpool</h3>${sel("carpool", "Rides", f.carpool || "none", Object.entries(CARPOOL))}${fld("carpool_note", "Note for other families", f.carpool_note, "text", 'placeholder="e.g. Need a ride home Tuesdays"')}
+    <label class="check"><input type="checkbox" name="show_in_directory" ${f.show_in_directory !== false ? "checked" : ""}> List our family in the team directory</label>
+    <button class="btn primary block" type="submit">Save family info</button></form>` };
+}
+function sizeSelect(k, val) {
+  const L = SIZE_FIELDS[k].list, list = val && !L.includes(val) ? [val, ...L] : L;
+  return `<div class="field"><label for="sz-${k}">${SIZE_FIELDS[k].label}</label><div class="sizepick"><select id="sz-${k}" name="${k}"><option value="">Not sure</option>${list.map(o => `<option ${o === val ? "selected" : ""}>${esc(o)}</option>`).join("")}</select><button type="button" class="btn sm" data-act="sizeup" data-k="${k}" aria-label="Size up ${SIZE_FIELDS[k].label}">+ Size up</button></div></div>`;
+}
+function shPickAth(s) {
+  const d = S.d;
+  return { title: "Choose an athlete", html: `<form class="stack" data-form="pickath" data-then="${esc(s.then || "order")}">
+    <div class="field"><label for="pa-id">Athlete</label><select id="pa-id" name="aid" required><option value="">Choose…</option>${d.teams.map(t => { const ath = d.athletes.filter(a => a.team === t.code && a.active !== false).sort((x, y) => fullName(x).localeCompare(fullName(y)));
+      return ath.length ? `<optgroup label="${esc(t.name)}">${ath.map(a => `<option value="${a.id}" ${a.id === S.ui.mAid ? "selected" : ""}>${esc(fullName(a))}</option>`).join("")}</optgroup>` : ""; }).join("")}</select></div>
+    <button class="btn primary block" type="submit">Continue</button></form>` };
+}
+function shSizes() {
+  const a = curA();
+  return { title: `${a.first_name}'s sizes`, html: `<form class="stack" data-form="sizes">
+    <div class="f2">${Object.entries(SIZE_FIELDS).filter(([, v]) => !v.teams || v.teams.includes(a.team)).map(([k]) => sizeSelect(k, a[k])).join("")}</div>
+    <h3>Measurements (inches, optional)</h3><div class="f2">${["chest","waist","hips","torso"].map(k => fld(k, k[0].toUpperCase() + k.slice(1), a[k], "number", 'step="0.5" min="0" inputmode="decimal"')).join("")}</div>
+    <button class="btn primary block" type="submit">Save sizes</button></form>` };
+}
+function shItem(s) {
+  const a = curA(), it = S.d.store_items.find(x => x.id === s.id), opts = parseOptions(it.options), p = priceFor(it, a);
+  return { title: it.name, html: `<form class="stack" data-form="item" data-id="${it.id}">
+    <div class="row between"><span class="muted">${it.category === "family" ? "For parents & siblings" : "For " + esc(a.first_name)}</span><b class="tnum" style="font-family:var(--f-display);font-size:1.3rem;font-weight:700">${money(p)}</b></div>
+    ${it.description ? `<p class="small muted" style="margin:0">${esc(it.description)}</p>` : ""}
+    ${opts.map((o, i) => { const v = o.field ? a[o.field] : ""; return `<div class="field"><label for="op${i}">${esc(o.label)}${o.field && v ? ` <span class="pill lime" style="margin-left:4px">${esc(a.first_name)}'s size</span>` : ""}</label><select id="op${i}" name="op${i}" required><option value="">Choose…</option>${o.choices.map(c => `<option ${c === v ? "selected" : ""}>${esc(c)}</option>`).join("")}</select></div>`; }).join("")}
+    ${it.allow_qty ? fld("qty", "Quantity", 1, "number", 'min="1" max="50" inputmode="numeric"') : ""}
+    <button class="btn lime block" type="submit">Add to order</button></form>` };
+}
+function shCart() {
+  const a = curA(), total = S.cart.reduce((s, c) => s + (c.price || 0) * c.qty, 0);
+  return { title: "Review order", html: `<form class="stack" data-form="cart">
+    <p class="small muted" style="margin:0">Ordering for ${esc(fullName(a))} · ${esc(team(a.team).name)}</p>
+    <div class="card" style="padding:4px 14px"><div class="list">${S.cart.map((c, i) => `<div class="li"><div class="grow"><b>${c.qty > 1 ? c.qty + " × " : ""}${esc(c.name)}</b>${Object.keys(c.choices).length ? `<div class="small muted">${Object.entries(c.choices).map(([k, v]) => `${esc(k)}: ${esc(v)}`).join(" · ")}</div>` : ""}</div><span class="tnum small">${c.price == null ? "TBD" : money(c.price * c.qty)}</span><button type="button" class="copy" data-act="cartrm" data-i="${i}">Remove</button></div>`).join("")}</div></div>
+    <div class="row between"><b>Total before tax</b><b class="tnum">${money(total)}</b></div>
+    ${sel("plan", "Payment option", "Full", PLANS)}
+    <p class="small muted" style="margin:0">${esc(S.d.set.payment_note || "")}</p>
+    ${fld("note", "Note for the team manager (optional)", "")}
+    <button class="btn primary block" type="submit" ${S.cart.length ? "" : "disabled"}>Submit order</button></form>` };
+}
+function shPkg() {
+  const a = curA(), pk = pkgsFor(a.level);
+  return { title: "Meet fee package", html: `<form class="stack" data-form="pkg">
+    <p class="small muted" style="margin:0">Choose the competition package for ${esc(a.first_name)} (${esc(LEVELS[a.level] || a.level)}).</p>
+    ${pk.map(p => `<label class="card check" style="align-items:flex-start"><input type="radio" name="pkg" value="${p.id}" ${a.meet_package === p.id ? "checked" : ""} required><span class="stack" style="gap:4px"><b>${esc(p.name)}${p.meets_count ? ` · ${p.meets_count} meets` : ""}</b><span class="small tnum">${money(p.full_price)} full · ${money(p.half_price)} ×2 · ${money(p.monthly_price)} × 6 monthly</span><span class="small muted">${esc(p.due_note || "")}</span></span></label>`).join("")}
+    ${sel("plan", "Payment plan", a.meet_plan || "Full", PLANS)}
+    <button class="btn primary block" type="submit">Save</button></form>` };
+}
+function shAccount() {
+  const both = S.me.isManager && S.me.familyId;
+  return { title: "Account", html: `<div class="stack"><div class="card"><div class="small muted">Signed in as</div><b>${esc(S.me.email)}</b></div>
+    ${both ? `<div class="seg" role="group"><button data-act="role" data-v="parent" aria-pressed="${S.role === "parent"}">Parent view</button><button data-act="role" data-v="manager" aria-pressed="${S.role === "manager"}">Manager view</button></div>` : ""}
+    ${S.d?.myFamily && S.role === "parent" ? `<button class="btn block" data-act="family">Edit family info</button>` : ""}
+    ${api.demo ? `<button class="btn block" data-act="persona">Switch demo person</button>` : `<button class="btn block" data-act="signout">Sign out</button>`}</div>` };
+}
+function shPersona() {
+  const cur = api.persona().key;
+  return { title: "View the demo as…", html: `<div class="stack">${PERSONAS.map(p => `<button class="card" style="text-align:left;${p.key === cur ? "border-color:var(--brand)" : ""}" data-act="setpersona" data-v="${p.key}"><b>${esc(p.label)}</b><div class="small muted">${esc(p.sub)}</div></button>`).join("")}
+    <p class="small muted">Everyone here is made up. In the real app each parent signs in with their own email and only sees their own children's info, plus the team directory.</p></div>` };
+}
+function shCsv(s) {
+  return { title: s.title, html: `<div class="stack"><p class="small muted" style="margin:0">${s.rows} rows. ${api.demo ? "Copy and paste into Google Sheets or Excel. (In your hosted app there is also a Download button.)" : "Download the file, or copy and paste it into Google Sheets or Excel."}</p>
+    <textarea class="csv" id="csv-text" readonly>${esc(s.csv)}</textarea>
+    <div class="row"><button class="btn primary" data-act="csvcopy">Copy</button>${api.demo ? "" : `<button class="btn" data-act="csvdl">Download .csv</button>`}</div></div>` };
+}
+
+/* ---------- manager forms (one generic editor) ---------- */
+const lvlOpts = Object.entries(LEVELS);
+const FORMS = {
+  athletes: { title: "Athlete", fields: () => [["first_name","First name","text",1],["last_name","Last name"],["team","Team","select",1,S.d.teams.map(t => [t.code, t.name])],["level","Competitive level","select",1,lvlOpts],["family_id","Family","select",0,S.d.families.map(f => [f.id, f.p1_name || f.p1_email || f.id]).sort((a, b) => a[1].localeCompare(b[1]))],["birthdate","Birthday","date"],["school_grade","School & grade"],
+    ...Object.entries(SIZE_FIELDS).map(([k, v]) => [k, v.label + " size", "select", 0, v.list]),["chest","Chest","number"],["waist","Waist","number"],["hips","Hips","number"],["torso","Torso","number"],["active","Active on the team","check"]] },
+  families: { title: "Family", fields: () => [["p1_name","Parent 1 name"],["p1_email","Parent 1 email","email"],["p1_phone","Parent 1 phone","tel"],["p2_name","Parent 2 name"],["p2_email","Parent 2 email","email"],["p2_phone","Parent 2 phone","tel"],["city","City"],["carpool","Carpool","select",1,Object.entries(CARPOOL)],["carpool_note","Carpool note"],["show_in_directory","Listed in team directory","check"]] },
+  practice_options: { title: "Practice option", fields: () => [["label","Name (e.g. Group 1A, Monday)","text",1],["schedule","Days & times (e.g. Mon 4:00–6:30)","text",1],["hours","Hours per week","number",1],["capacity","Spots","number",1],["teams","Teams who can sign up","multi",1,S.d.teams.map(t => [t.code, t.name])],["note","Note"],["sort","Order on page","number"]] },
+  teams: { title: "Team", fields: () => [["name","Team name","text",1],["level","Competitive level","select",1,lvlOpts],["signup_mode","How practice sign-up works","select",1,[["group","Pick one group"],["pick","Pick individual days"]]],["min_hours","Minimum hours per week","number"],["max_hours","Maximum hours per week","number"],["practice_note","Note shown on the practice page","textarea"],["sort","Order","number"]] },
+  meets: { title: "Meet", fields: () => [["kind","Type","select",1,[["meet","Meet"],["clinic","Clinic"],["closure","Break / gym closed"]]],["name","Name","text",1],["start_date","Start date","date",1],["end_date","End date","date"],["host","Host"],["location","Location"],["federations","Federation","multi",0,FEDS],["levels","Who's competing","multi",0,lvlOpts.map(([k]) => [k, k])],["note","Note (qualifying rules, etc.)","textarea"]] },
+  meet_packages: { title: "Meet fee package", fields: () => [["name","Name","text",1],["levels","Levels","multi",1,lvlOpts.map(([k]) => [k, k])],["meets_count","Number of meets","number"],["full_price","Full price","number"],["half_price","Each half payment","number"],["monthly_price","Each monthly payment","number"],["due_note","Due dates","text"],["sort","Order","number"]] },
+  store_items: { title: "Store item", fields: () => [["name","Name","text",1],["description","Description","textarea"],["category","For","select",1,[["athlete","Athlete"],["family","Parents & siblings"]]],["price","Price","number"],["level_prices","Price by level (e.g. L1=142.89, L2=142.89)","kv"],["teams","Only show to these teams (none = everyone)","multi",0,S.d.teams.map(t => [t.code, t.name])],["options","Choices, one per line (e.g. Color: Black, Green · Size: @apparel · Hoodie size: @sweatshirt_size)","textarea"],["required_note","Required note"],["allow_qty","Parents can order more than one","check"],["active","Show in the shop","check"],["sort","Order","number"]] },
+  holiday_days: { title: "Holiday practice day", fields: () => [["label","Label","text",1],["day","Date","date",1],["sort","Order","number"]] },
+  settings: { title: "Setting", fields: () => [["value","Value","textarea"]] }
+};
+function shForm(s) {
+  const F = FORMS[s.table], key = pkOf(s.table)[0], row = s.id ? (S.d[s.table].find(r => String(r[key]) === String(s.id)) || {}) : (s.table === "athletes" ? { active: true } : s.table === "families" ? { show_in_directory: true, carpool: "none" } : s.table === "store_items" ? { active: true, allow_qty: true, category: "athlete" } : {});
+  const f = F.fields(); const del = `del-${s.table}-${s.id}`;
+  const field = ([k, l, t = "text", req, opts]) => {
+    const v = row[k], id = "f-" + k, r = req ? "required" : "";
+    if (t === "select") return sel(id, l, v, opts, req ? null : "—").replace(`<select id="${id}"`, `<select id="${id}" ${r}`);
+    if (t === "multi") return `<div class="field"><label>${l}</label><div class="multi">${opts.map(o => { const [ov, ol] = Array.isArray(o) ? o : [o, o]; return `<label><input type="checkbox" name="${id}" value="${esc(ov)}" ${(v || []).includes(ov) ? "checked" : ""}>${esc(ol)}</label>`; }).join("")}</div></div>`;
+    if (t === "check") return `<label class="check"><input type="checkbox" name="${id}" ${v ? "checked" : ""}> ${l}</label>`;
+    if (t === "textarea") return `<div class="field"><label for="${id}">${l}</label><textarea id="${id}" name="${id}" ${r}>${esc(v ?? "")}</textarea></div>`;
+    if (t === "kv") return fld(id, l, v ? Object.entries(v).map(([a, b]) => `${a}=${b}`).join(", ") : "");
+    return fld(id, l, v, t, `${r} ${t === "number" ? 'step="any"' : ""}`);
+  };
+  return { title: (s.id ? "Edit " : "Add ") + F.title.toLowerCase(), html: `<form class="stack" data-form="generic">
+    ${s.table === "teams" && !s.id ? fld("f-code", "Short code (e.g. XS3)", "", "text", "required") : ""}
+    ${s.table === "settings" ? `<div class="small muted">${esc(String(s.id).replace(/_/g, " "))}</div>` : ""}
+    ${f.map(field).join("")}
+    <div class="row"><button class="btn primary" type="submit">Save</button>${s.id && s.table !== "settings" ? `<button type="button" class="btn ${S.armed === del ? "armed" : "danger"}" data-act="fdel">${S.armed === del ? "Tap again to delete" : "Delete"}</button>` : ""}</div></form>` };
+}
+
+/* =====================================================================
+   EVENTS
+   ===================================================================== */
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2600); }
+function arm(key) { if (S.armed === key) { S.armed = null; return true; } S.armed = key; render(); setTimeout(() => { if (S.armed === key) { S.armed = null; render(); } }, 3500); return false; }
+async function copyText(v) { try { await navigator.clipboard.writeText(v); toast("Copied"); } catch { toast("Press and hold to copy"); } }
+function exportCSV(what) {
+  const d = S.d, A = id => d.athletes.find(a => a.id === id) || {}, F = id => d.families.find(f => f.id === id) || {};
+  let rows = [], cols = [], title = "";
+  if (what === "roster") { title = "Roster"; rows = d.athletes.slice().sort((a, b) => team(a.team).sort - team(b.team).sort);
+    cols = [["athlete", fullName], ["team", a => team(a.team).name], ["level", "level"], ["birthday", "birthdate"], ["school_grade", "school_grade"], ["hours_signed_up", a => hoursOf(a.id)], ["parent1", a => F(a.family_id).p1_name], ["parent1_email", a => F(a.family_id).p1_email], ["parent1_phone", a => F(a.family_id).p1_phone], ["parent2", a => F(a.family_id).p2_name], ["parent2_email", a => F(a.family_id).p2_email], ["parent2_phone", a => F(a.family_id).p2_phone], ["city", a => F(a.family_id).city], ...Object.keys(SIZE_FIELDS).map(k => [k, k]), ["chest","chest"],["waist","waist"],["hips","hips"],["torso","torso"]]; }
+  if (what === "signups") { title = "Practice sign-ups"; rows = d.practice_signups.slice().sort(by("created_at")).map(s => ({ ...s, o: d.practice_options.find(o => o.id === s.option_id) || {}, a: A(s.athlete_id) }));
+    cols = [["practice", r => r.o.label], ["schedule", r => r.o.schedule], ["hours", r => r.o.hours], ["athlete", r => fullName(r.a)], ["team", r => team(r.a.team).name], ["status", r => r.waitlisted ? "waitlist" : "confirmed"], ["signed_up_at", "created_at"]]; }
+  if (what === "rsvps") { title = "Meet RSVPs"; d.meets.filter(m => m.kind !== "closure").forEach(m => d.athletes.filter(a => (m.levels || []).includes(a.level)).forEach(a => rows.push({ m, a, v: rsvpOf(a.id, m.id) || "no reply" })));
+    cols = [["meet", r => r.m.name], ["dates", r => dateRange(r.m.start_date, r.m.end_date).md], ["athlete", r => fullName(r.a)], ["level", r => r.a.level], ["rsvp", "v"]]; }
+  if (what === "packages") { title = "Meet fee choices"; rows = d.athletes.filter(a => pkgsFor(a.level).length);
+    cols = [["athlete", fullName], ["level", "level"], ["package", a => (d.meet_packages.find(p => p.id === a.meet_package) || {}).name || "not chosen"], ["payment_plan", "meet_plan"]]; }
+  if (what === "holiday") { title = "Holiday practice"; rows = d.athletes.filter(a => a.active !== false);
+    cols = [["athlete", fullName], ["team", a => team(a.team).name], ...d.holiday_days.map(h => [h.label + " " + h.day, a => { const v = holOf(a.id, h.id); return v == null ? "" : v ? "yes" : "no"; }])]; }
+  if (what === "orders") { title = "Orders"; d.orders.forEach(o => d.order_items.filter(i => i.order_id === o.id).forEach(i => rows.push({ o, i, a: A(o.athlete_id), f: F(o.family_id) })));
+    cols = [["date", r => r.o.created_at.slice(0, 10)], ["athlete", r => fullName(r.a)], ["team", r => team(r.a.team).name], ["parent", r => r.f.p1_name], ["item", r => r.i.item_name], ["choices", r => Object.entries(r.i.choices || {}).map(([k, v]) => `${k}: ${v}`).join("; ")], ["qty", r => r.i.qty], ["unit_price", r => r.i.unit_price], ["payment_plan", r => r.o.payment_plan], ["status", r => r.o.status], ["note", r => r.o.note]]; }
+  if (what === "totals") { title = "Vendor totals"; const live = d.orders.filter(o => o.status !== "cancelled").map(o => o.id), t = {};
+    d.order_items.filter(i => live.includes(i.order_id)).forEach(i => { const c = Object.entries(i.choices || {}).map(([k, v]) => `${k}: ${v}`).join("; "); const k = i.item_name + "||" + c; t[k] = (t[k] || 0) + i.qty; });
+    rows = Object.entries(t).map(([k, q]) => ({ item: k.split("||")[0], choices: k.split("||")[1], qty: q })); cols = [["item","item"],["choices","choices"],["qty","qty"]]; }
+  openSheet({ type: "csv", title: title + " export", csv: toCSV(rows, cols), rows: rows.length, file: title.toLowerCase().replace(/\W+/g, "-") + ".csv", focus: false });
+}
+
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const k = el.dataset.act, ds = el.dataset, a = S.d && curA();
+  if (k === "scrim" && e.target !== el) return;
+  switch (k) {
+    case "scrim": case "close": closeSheet(); break;
+    case "tab": closeSheet(); if (S.role === "manager") S.ui.mtab = ds.tab; else S.ui.tab = ds.tab; S.ui.q = ""; render(); window.scrollTo(0, 0); break;
+    case "kid": S.ui.aid = ds.id; prefs.set("aid", ds.id); render(); break;
+    case "family": openSheet({ type: "family" }); break;
+    case "account": openSheet({ type: "account", focus: false }); break;
+    case "persona": openSheet({ type: "persona", focus: false }); break;
+    case "setpersona": api.setPersona(ds.v); S.role = ds.v === "manager" ? "manager" : "parent"; S.ui.aid = null; S.carts = {}; closeSheet(); S.ui.tab = "home"; S.ui.mtab = "overview"; await refresh(); window.scrollTo(0, 0); break;
+    case "role": S.role = ds.v; closeSheet(); render(); break;
+    case "signout": await api.signOut(); location.reload(); break;
+    case "meetScope": S.ui.meetScope = ds.v; render(); break;
+    case "fed": S.ui.fed = ds.v; render(); break;
+    case "dirScope": S.ui.dirScope = ds.v; render(); break;
+    case "ride": S.ui.ride = ds.v; render(); break;
+    case "rosterTeam": S.ui.rosterTeam = ds.v; render(); break;
+    case "orderStatus": S.ui.orderStatus = ds.v; render(); break;
+    case "rosterMode": S.ui.rosterMode = ds.v; render(); break;
+    case "msizes": S.ui.mAid = ds.id; openSheet({ type: "sizes", focus: false }); break;
+    case "morder": S.ui.mAid = ds.id; S.ui.mtab = "orders"; render(); window.scrollTo(0, 0); break;
+    case "pickath": openSheet({ type: "pickath", then: ds.then }); break;
+    case "mdone": S.cart = []; S.ui.mAid = null; render(); window.scrollTo(0, 0); break;
+    case "copy": copyText(ds.v); break;
+    case "sign": {
+      const t = team(a.team), o = S.d.practice_options.find(x => x.id === ds.opt);
+      const all = signupsOf(a.id).reduce((h, s) => h + Number((S.d.practice_options.find(x => x.id === s.option_id) || {}).hours || 0), 0);
+      if (S.role !== "manager" && t.signup_mode === "pick" && t.max_hours != null && all + Number(o.hours) > t.max_hours) { toast(`${t.name} is ${t.max_hours} hours a week. Remove a day first.`); return; }
+      await act(async () => {
+        if (t.signup_mode === "group") for (const s of signupsOf(a.id).filter(s => optsFor(a.team).some(o => o.id === s.option_id))) await api.remove("practice_signups", { athlete_id: a.id, option_id: s.option_id });
+        await api.insert("practice_signups", { athlete_id: a.id, option_id: ds.opt });
+      });
+      const s = signupsOf(a.id).find(x => x.option_id === ds.opt); if (s) toast(s.waitlisted ? `Added to the waitlist (#${waitPos(s)})` : `${a.first_name} is signed up`);
+      break; }
+    case "unsign": if (!arm("rm-" + ds.opt)) return; await act(() => api.remove("practice_signups", { athlete_id: a.id, option_id: ds.opt }), "Removed"); break;
+    case "hol": await act(() => api.upsert("holiday_responses", { athlete_id: a.id, day_id: ds.day, attending: ds.v === "1" }), "Saved"); break;
+    case "rsvp": await act(() => api.upsert("meet_rsvps", { athlete_id: a.id, meet_id: ds.meet, status: ds.v, updated_at: new Date().toISOString() }), "RSVP saved"); break;
+    case "pkg": openSheet({ type: "pkg", focus: false }); break;
+    case "sizes": openSheet({ type: "sizes", focus: false }); break;
+    case "sizeup": { const s = $(`#sz-${ds.k}`), L = SIZE_FIELDS[ds.k].list, i = L.indexOf(s.value); s.value = i < 0 ? L[0] : L[Math.min(L.length - 1, i + 1)]; break; }
+    case "additem": openSheet({ type: "item", id: ds.id, focus: false }); break;
+    case "cart": openSheet({ type: "cart", focus: false }); break;
+    case "cartrm": S.cart.splice(+ds.i, 1); if (!S.cart.length) { closeSheet(); render(); } else { render(); } break;
+    case "ostatus": break;
+    case "export": exportCSV(ds.what); break;
+    case "csvcopy": copyText($("#csv-text").value); break;
+    case "csvdl": { const b = new Blob([S.sheet.csv], { type: "text/csv" }), u = URL.createObjectURL(b), l = document.createElement("a"); l.href = u; l.download = S.sheet.file; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 2000); break; }
+    case "form": openSheet({ type: "form", table: ds.table, id: ds.id, focus: false }); break;
+    case "fdel": { const s = S.sheet, key = `del-${s.table}-${s.id}`; if (S.armed !== key) { S.armed = key; renderSheet(); setTimeout(() => { if (S.armed === key) { S.armed = null; renderSheet(); } }, 3500); return; }
+      S.armed = null; closeSheet(); await act(() => api.remove(s.table, { [pkOf(s.table)[0]]: s.id }), "Deleted"); break; }
+    case "mremove": if (!arm("mr-" + ds.a + ds.o)) return; await act(() => api.remove("practice_signups", { athlete_id: ds.a, option_id: ds.o }), "Removed"); break;
+    case "promote": await act(() => api.update("practice_signups", { athlete_id: ds.a, option_id: ds.o }, { waitlisted: false }), "Spot given"); break;
+  }
+});
+document.addEventListener("change", async e => {
+  const el = e.target;
+  if (el.dataset.act === "ostatus") await act(() => api.update("orders", { id: el.dataset.id }, { status: el.value }), "Status updated");
+});
+document.addEventListener("input", e => {
+  const el = e.target; if (el.dataset.input === "q") { S.ui.q = el.value; const pos = el.selectionStart; render(); const n = document.getElementById(el.id); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch {} } }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && S.sheet) closeSheet(); });
+document.addEventListener("submit", async e => {
+  const form = e.target; if (!form.dataset.form) return; e.preventDefault();
+  const fd = new FormData(form), g = k => (fd.get(k) ?? "").toString().trim(), nz = v => v === "" ? null : v, a = S.d && curA();
+  const btn = form.querySelector('[type="submit"]'); if (btn) btn.disabled = true;
+  switch (form.dataset.form) {
+    case "signin": try { await api.signIn(g("email")); $("#si-msg").textContent = `Check ${g("email")} for your sign-in link.`; } catch (err) { $("#si-msg").textContent = err.message; } if (btn) btn.disabled = false; return;
+    case "family": { const p = {}; ["p1_name","p1_email","p1_phone","p2_name","p2_email","p2_phone","city","carpool","carpool_note"].forEach(k => p[k] = nz(g(k)));
+      p.carpool = p.carpool || "none"; p.show_in_directory = fd.has("show_in_directory"); p.updated_at = new Date().toISOString();
+      closeSheet(); await act(() => api.update("families", { id: S.d.myFamily.id }, p), "Family info saved"); break; }
+    case "sizes": { const p = { sizes_updated_at: new Date().toISOString() }; Object.keys(SIZE_FIELDS).forEach(k => { if (fd.has(k)) p[k] = nz(g(k)); }); ["chest","waist","hips","torso"].forEach(k => p[k] = g(k) === "" ? null : Number(g(k)));
+      closeSheet(); await act(() => api.update("athletes", { id: a.id }, p), "Sizes saved"); break; }
+    case "item": { const it = S.d.store_items.find(x => x.id === form.dataset.id), opts = parseOptions(it.options), choices = {};
+      opts.forEach((o, i) => choices[o.label] = g("op" + i));
+      S.cart.push({ item_id: it.id, name: it.name, choices, qty: it.allow_qty ? Math.max(1, Math.min(50, parseInt(g("qty")) || 1)) : 1, price: priceFor(it, a) });
+      closeSheet(); render(); toast("Added to your order"); break; }
+    case "cart": {
+      const plan = g("plan"), note = nz(g("note")), cart = S.cart.slice();
+      closeSheet();
+      await act(async () => { const o = await api.insert("orders", { family_id: a.family_id, athlete_id: a.id, payment_plan: plan, note, status: "submitted" });
+        for (const c of cart) await api.insert("order_items", { order_id: o.id, item_id: c.item_id, item_name: c.name, choices: c.choices, qty: c.qty });
+        S.cart = []; }, "Order sent to the team manager"); break; }
+    case "pickath": S.ui.mAid = g("aid"); closeSheet(); if (form.dataset.then === "sizes") openSheet({ type: "sizes", focus: false }); else { S.ui.mtab = "orders"; render(); window.scrollTo(0, 0); } return;
+    case "pkg": closeSheet(); await act(() => api.update("athletes", { id: a.id }, { meet_package: g("pkg"), meet_plan: g("plan") }), "Meet package saved"); break;
+    case "generic": {
+      const s = S.sheet, F = FORMS[s.table].fields(), row = {};
+      F.forEach(([k, , t]) => { const id = "f-" + k;
+        if (t === "multi") row[k] = fd.getAll(id); else if (t === "check") row[k] = fd.has(id);
+        else if (t === "number") row[k] = g(id) === "" ? null : Number(g(id));
+        else if (t === "kv") { const o = {}; g(id).split(",").map(x => x.trim()).filter(Boolean).forEach(p => { const [kk, vv] = p.split("=").map(z => z.trim()); if (kk && vv && !isNaN(vv)) o[kk.toUpperCase()] = Number(vv); }); row[k] = o; }
+        else row[k] = nz(g(id)); });
+      const key = pkOf(s.table)[0];
+      closeSheet();
+      await act(async () => {
+        if (s.id) await api.update(s.table, { [key]: s.id }, row);
+        else { if (s.table === "teams") row.code = g("f-code").toUpperCase(); await api.insert(s.table, row); }
+      }, "Saved");
+      break; }
+  }
+});
+
+/* ---------- start ---------- */
+(async function start() {
+  try {
+    if (LIVE) {
+      if (!window.supabase) throw new Error("Couldn't load the Supabase library. Check your internet connection.");
+      api = liveApi();
+      api.sb.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" || ev === "SIGNED_OUT") refresh(); });
+    } else api = demoApi();
+    await load();
+  } catch (e) { S.error = e.message; }
+  S.loading = false; render();
+})();
+</script>
+</body></html>
